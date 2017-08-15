@@ -5,7 +5,7 @@
   "main": "./server/index.js",
   "scripts": {
     "build": "npm run-script clean && npm run-script build-server && npm run-script copy-data",
-    "clean": "rimraf ./server",
+    "clean": "rimraf ./build",
     "build-server": "tsc --project ./src/server/tsconfig.json",
     "copy-data": "copyfiles -e ./**/tsconfig.json -u 2 ./src/server/**/*.json ./server",
     "test": "test"
