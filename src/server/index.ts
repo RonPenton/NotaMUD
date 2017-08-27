@@ -8,30 +8,25 @@ import * as bodyParser from 'body-parser';
 import * as session from 'express-session';
 import * as passport from 'passport';
 import * as passportSocketIo from "passport.socketio";
-
-// import * as passportsocketio from 'passport.socketio';
+import * as AWS from 'aws-sdk';
 
 import secrets from './secrets';
-import config from './config';
+import config, { dbconfig } from './config';
 import routes from './routes';
 import * as auth from './auth';
 import { Message } from './messages';
 
-
+AWS.config.update(secrets.AWSConfig);
 const awsoptions = {
-    table: 'notamud_sessions',
-    AWSConfigJSON: {
-        accessKeyId: secrets.AWSAccessKeyId,
-        secretAccessKey: secrets.AWSSecretKey,
-        region: config.AWSRegion
-    },
-    readCapacityUnits: 5,
-    writeCapacityUnits: 5
+    table: dbconfig.session,
+    AWSConfigJSON: secrets.AWSConfig,
+    readCapacityUnits: config.AWSReadCapacityUnits,
+    writeCapacityUnits: config.AWSWriteCapacityUnits
 };
 
 const app = express();
 auth.init();
-const port = process.env.PORT || config.port;
+const port = process.env.PORT || config.Port;
 app.set("port", port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -62,10 +57,7 @@ io.use(passportSocketIo.authorize({
     key: 'connect.sid',
     secret: secrets.cookieSecret,
     store: dynamodb
-    // success:      onAuthorizeSuccess,  // *optional* callback on success - read more below
-    // fail:         onAuthorizeFail,     // *optional* callback on fail/error - read more below
 }));
-
 
 function sendMessage(socket: SocketIO.Socket, message: Message) {
     const { type, ...rest } = message;
@@ -77,6 +69,8 @@ io.on('connection', function (socket) {
     var req: express.Request = socket.request;
 
     if(req.isUnauthenticated()) {
+        // Probably not needed because the middleware prevents unauthorized connections
+        // from getting this far. That being said, if the behavior ever changes, at least we're protected.
         sendMessage(socket, { type: 'access-denied' });
         socket.disconnect(true);
         return;

@@ -1,4 +1,4 @@
-export interface Player {
+export interface User {
     name: string;
     passwordHash: string;
     created: Date;
@@ -6,4 +6,4 @@ export interface Player {
     suspendedUntil?: Date;
 }
 
-export default Player;
+export default User;
