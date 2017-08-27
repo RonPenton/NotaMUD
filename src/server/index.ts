@@ -44,6 +44,7 @@ app.use(session({ store: dynamodb, secret: secrets.cookieSecret, resave: false, 
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(auth.catchAuthErrorsMiddleware);
 
 app.use(routes);
 

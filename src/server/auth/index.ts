@@ -1,6 +1,8 @@
 import * as passport from "passport";
 import * as passport_local from "passport-local";
 import * as bcrypt from 'bcrypt-nodejs';
+import { ErrorRequestHandler } from 'express';
+import * as moment from 'moment';
 import { getUser } from '../models/db';
 import User from '../models/user';
 const LocalStrategy = passport_local.Strategy;
@@ -8,8 +10,8 @@ const LocalStrategy = passport_local.Strategy;
 export const hash = (password: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
         bcrypt.genSalt(10, (error, salt) => {
-            if(error) return reject(error);
-            bcrypt.hash(password, salt, () => {}, (error, result) => {
+            if (error) return reject(error);
+            bcrypt.hash(password, salt, () => { }, (error, result) => {
                 if (error) return reject(error);
                 resolve(result);
             });
@@ -17,14 +19,17 @@ export const hash = (password: string): Promise<string> => {
     });
 }
 
-// export const validatePassword = (user: User, password: string): Promise<boolean> => {
-//     return new Promise<boolean>((resolve, reject) => {
-//         bcrypt.compare(password, user.passwordHash, (error, result) => {
-//             if (error) return reject(error);
-//             resolve(result);
-//         })
-//     });
-// }
+export const catchAuthErrorsMiddleware: ErrorRequestHandler = (err, req, res, next) => {
+    if (err == MISSING_USER_RECORD || err == BANNED) {
+        req.logout(); // So deserialization won't continue to fail.
+        res.redirect("/login");
+    } else {
+        next();
+    }
+}
+
+export const MISSING_USER_RECORD = "Missing User Record";
+export const BANNED = "User is banned";
 
 export const init = () => {
     passport.serializeUser<User, string>(function (user, done) {
@@ -35,7 +40,10 @@ export const init = () => {
         try {
             const user = await getUser(id);
             if (!user) {
-                return done("No user!");
+                return done(MISSING_USER_RECORD);
+            }
+            if (user.suspendedUntil && user.suspendedUntil.isAfter(moment())) {
+                return done(BANNED);
             }
             done(null, user);
         }
@@ -53,6 +61,11 @@ export const init = () => {
         bcrypt.compare(password, user.passwordHash, (err, result) => {
             if (err) return done(err);
             if (!result) return done(null, false, { message: "Invalid password." });
+            if (user.suspendedUntil && user.suspendedUntil.isAfter(moment())) {
+                const reason = user.suspensionReason ? ` for ${user.suspensionReason}` : "";
+                return done(null, false, { message: `You are suspended until ${user.suspendedUntil.format()}${reason}` });
+            }
+
             return done(null, user);
         });
     }));
