@@ -1,7 +1,7 @@
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var extractPlugin = new ExtractTextPlugin({
-   filename: 'bundle.css'
+    filename: 'bundle.css'
 });
 
 module.exports = {
@@ -22,11 +22,13 @@ module.exports = {
     module: {
         rules: [
             { test: /\.tsx?$/, loader: "ts-loader" },
+            { test: /\.scss$/, use: [{ loader: "style-loader" }, { loader: "css-loader" }, { loader: "sass-loader" }] }
         ]
     },
 
     plugins: [
-        extractPlugin
+        extractPlugin,
+        
     ],
 
 };
