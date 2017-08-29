@@ -1,13 +1,17 @@
 import React from 'react'
 import * as ReactDOM from 'react-dom'
 import io from 'socket.io-client';
+import { Button, LinkButton } from './foundation/button';
+
 
 export class App extends React.Component {
     render() {
 
         return (
             <div>
-                <button onClick={() => this.clicked()}>boop</button>
+
+                <Button onClick={() => this.clicked()}>boop</Button>
+                <LinkButton href="/game">zoop</LinkButton>
             </div>
         );
     }
