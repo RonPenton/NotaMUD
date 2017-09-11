@@ -11,8 +11,9 @@
         "clean": "rimraf ./build",
         "build-server": "tsc --project ./src/server/tsconfig.json",
         "build-client": "webpack --config ./src/client/webpack.config.js",
-        "copy-data": "copyfiles -u 4 ./node_modules/foundation-sites/dist/css/foundation.min.css ./build/public && copyfiles -u 2 ./src/client/**/*.html ./build/public && copyfiles -u 2 ./src/client/**/*.css ./build/public && copyfiles -u 3 ./src/client/views/**/*.ejs ./build/views",
-        "test": "test"
+        "copy-data": "copyfiles -u 4 ./node_modules/foundation-sites/dist/css/foundation.min.css ./build/public && copyfiles -u 2 ./src/client/**/*.css ./build/public && copyfiles -u 3 ./src/client/views/**/*.ejs ./build/views && copyfiles -u 2 ./src/client/**/*.svg ./build/public",
+        "test": "test",
+        "build-ts": "tsc --project ./src/client/tsconfig.json"
     },
     "repository": {
         "type": "git",
