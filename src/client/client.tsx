@@ -27,7 +27,7 @@ export class App extends React.Component {
     }
 
     private clicked() {
-        var socket = io('', { transports: ['websocket'] });
+        const socket = io('', { transports: ['websocket'] });
         socket.on('news', function (data: any) {
             console.log(data);
             socket.emit('my other event', { my: 'data' });

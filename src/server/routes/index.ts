@@ -7,6 +7,13 @@ import * as auth from '../auth';
 
 const router = express.Router();
 
+router.use(function (req, res, next) {
+    res.locals.currentUser = req.user;
+    res.locals.errors = req.flash("error");
+    res.locals.infos = req.flash("info");
+    next();
+});
+
 /* GET home page. */
 router.get('/', function (_, res) {
     res.render('index', { title: 'NotaMUD' });
@@ -18,12 +25,14 @@ export const ensureAuthenticated: RequestHandler = (req, res, next) => {
     if (req.isAuthenticated()) {
         next();
     } else {
-        res.redirect("/login?x");
+        req.flash("info", "You must be logged in to see that page.");
+        res.redirect("/login");
     }
 }
 
 router.get("/login", function (req, res) {
-    if(req.isAuthenticated()) {
+    req.flash('test', 'it worked');
+    if (req.isAuthenticated()) {
         // redirect to game if they're already authenticated.
         res.redirect("/game");
         return;
@@ -34,7 +43,8 @@ router.get("/login", function (req, res) {
 router.post("/login", passport.authenticate("login", {
     successRedirect: "/game",
     failureRedirect: "/login",
-    session: true
+    session: true,
+    failureFlash: true
 }));
 
 router.post("/logout", function (req, res) {
@@ -47,7 +57,7 @@ router.get("/game", ensureAuthenticated, function (_, res) {
 });
 
 router.get("/signup", function (req, res) {
-    if(req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
         // redirect to game if they're already authenticated.
         res.redirect("/game");
         return;
@@ -57,13 +67,14 @@ router.get("/signup", function (req, res) {
 
 router.post("/signup", async function (req, res, next) {
 
-    var username = req.body.username as string;
-    var password = req.body.password as string;
+    const username = req.body.username as string;
+    const password = req.body.password as string;
 
     try {
         const user = await db.getUser(username);
         if (user) {
-            return res.redirect("/signup?exists");
+            req.flash("error", "Username already taken");
+            return res.redirect("/signup");
         }
 
         const hash = await auth.hash(password);

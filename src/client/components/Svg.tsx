@@ -45,7 +45,7 @@ export class SvgLoader extends React.Component<SvgLoaderProps, SvgLoaderState> {
     }
 
     private load() {
-        var req = new XMLHttpRequest;
+        const req = new XMLHttpRequest;
         req.open("GET", this.props.url);
         req.onreadystatechange = () => {
             if (req.readyState == XMLHttpRequest.DONE && req.status == 200) {

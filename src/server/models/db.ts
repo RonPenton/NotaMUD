@@ -87,7 +87,7 @@ async function createItem<T>(table: string, item: T): Promise<void> {
 };
 
 async function getItem<T>(table: string, keyName: string, key: string | number): Promise<T> {
-    var keyObject: any = {};
+    const keyObject: any = {};
     keyObject[keyName] = key;
     const params = {
         TableName: table,

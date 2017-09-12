@@ -18,8 +18,28 @@
                 <ul class="menu">
                     <li><a href="/">Home</a></li>
                     <li><a href="/game">Game</a></li>
-                    <li><a href="/logout">Logout</a></li>
+                    <% if (currentUser) { %>
+                        <li><%= currentUser.name %></li>
+                        <li><form action="/logout" method="POST"><input type="submit" value="Logout" /></form></li>
+                    <% } else { %>
+                        <li><a href="/login">Log in</a></li>
+                        <li><a href="/signup">Sign up</a></li>
+                    <% } %>
                 </ul>
             </div>
         </div>
     </header>
+
+
+    <% errors.forEach(function(error) { %>
+        <div class="callout alert" role="alert">
+          <%= error %>
+        </div>
+      <% }) %>
+    
+      <% infos.forEach(function(info) { %>
+        <div class="callout primary" role="alert">
+          <%= info %>
+        </div>
+      <% }) %>
+    

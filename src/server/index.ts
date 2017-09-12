@@ -7,6 +7,7 @@ import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
 import * as session from 'express-session';
 import * as passport from 'passport';
+import flash = require('connect-flash');
 import * as passportSocketIo from "passport.socketio";
 import * as AWS from 'aws-sdk';
 
@@ -38,9 +39,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-var DynamoDBStore = require('connect-dynamodb')({ session: session });
-var dynamodb = new DynamoDBStore(awsoptions);
+const DynamoDBStore = require('connect-dynamodb')({ session: session });
+const dynamodb = new DynamoDBStore(awsoptions);
 app.use(session({ store: dynamodb, secret: secrets.cookieSecret, resave: false, saveUninitialized: false }));
+app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -67,7 +69,7 @@ function sendMessage(socket: SocketIO.Socket, message: Message) {
 
 io.on('connection', function (socket) {
     console.log("connected");
-    var req: express.Request = socket.request;
+    const req: express.Request = socket.request;
 
     if(req.isUnauthenticated()) {
         // Probably not needed because the middleware prevents unauthorized connections
