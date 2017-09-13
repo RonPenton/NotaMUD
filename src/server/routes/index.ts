@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as passport from "passport";
 import * as moment from 'moment';
 import * as db from '../models/db';
-import User from '../models/user';
+import User, { getCanonicalName, isInvalidName } from '../models/user';
 import * as auth from '../auth';
 
 const router = express.Router();
@@ -71,6 +71,11 @@ router.post("/signup", async function (req, res, next) {
     const password = req.body.password as string;
 
     try {
+        if(isInvalidName(username)) {
+            req.flash("error", "Invalid User Name. Names cannot contain spaces, numbers, symbols, or extended ASCII characters.");
+            return res.redirect("/signup");
+        }
+
         const user = await db.getUser(username);
         if (user) {
             req.flash("error", "Username already taken");
@@ -80,7 +85,8 @@ router.post("/signup", async function (req, res, next) {
         const hash = await auth.hash(password);
 
         const newUser: User = {
-            name: username,
+            name: getCanonicalName(username),
+            displayName: username,
             passwordHash: hash,
             created: moment(),
             lastLogin: moment()

@@ -1,7 +1,7 @@
 import * as AWS from 'aws-sdk';
 import * as moment from 'moment';
 
-import User from './user';
+import User, { getCanonicalName } from './user';
 import secrets from '../secrets';
 import { dbconfig } from '../config';
 
@@ -11,13 +11,12 @@ AWS.config.update(secrets.AWSConfig);
 const dc = new AWS.DynamoDB.DocumentClient();
 
 export async function getUser(name: string): Promise<User | null> {
-    return getItem<User>(dbconfig.users, "name", name);
+    return getItem<User>(dbconfig.users, "name", getCanonicalName(name));
 }
 
 export async function createUser(user: User): Promise<void> {
     return createItem(dbconfig.users, user);
 }
-
 
 // Stolen from moment.js
 const isoRegex = /^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
