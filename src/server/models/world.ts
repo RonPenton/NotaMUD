@@ -1,5 +1,5 @@
 import { User } from "./user";
-import { Actor } from "./actor";
+// import { Actor } from "./actor";
 import { Room } from "./room";
 import { Scriptable } from "./scriptable";
 
@@ -13,6 +13,10 @@ export class World implements Scriptable {
 
     public data: { [index: string]: any } = [];
 
+    constructor(private db: AWS.DynamoDB.DocumentClient) {
+
+    }
+    
     public userCreated(user: User) {
         if (this.users.has(user.name))
             throw new Error("Cannot add user to world, username taken.");

@@ -4,10 +4,10 @@ import * as moment from 'moment';
 import User, { getCanonicalName } from './user';
 import secrets from '../secrets';
 import { dbconfig } from '../config';
+import { Room } from './room';
 
 AWS.config.update(secrets.AWSConfig);
 
-//const db = new AWS.DynamoDB();
 const dc = new AWS.DynamoDB.DocumentClient();
 
 export async function getUser(name: string): Promise<User | null> {
@@ -17,6 +17,15 @@ export async function getUser(name: string): Promise<User | null> {
 export async function createUser(user: User): Promise<void> {
     return createItem(dbconfig.users, user);
 }
+
+export async function getRoom(id: number): Promise<Room | null> {
+    return getItem<Room>(dbconfig.rooms, "id", id);
+}
+
+export async function createRoom(room: Room): Promise<void> {
+    return createItem(dbconfig.rooms, room);
+}
+
 
 // Stolen from moment.js
 const isoRegex = /^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;

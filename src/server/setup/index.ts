@@ -2,6 +2,10 @@ import * as AWS from 'aws-sdk';
 
 import secrets from '../secrets';
 import config, { dbconfig } from '../config';
+import { Room } from '../models/room';
+import { createRoom } from '../models/db';
+
+const rooms: Room[] = require("../../data/rooms.json");
 
 AWS.config.update(secrets.AWSConfig);
 
@@ -12,14 +16,23 @@ export async function init() {
 
     console.log(`Initializing ${config.Name} verison ${config.Version.toString()}...`);
 
-    if (!await checkTableExists(db, dbconfig.users)) {
-        await createTable(db, dbconfig.users, "name", "string");
-    }
+    await initializeTable(db, dbconfig.users, "name", "string");
+    await initializeTable(db, dbconfig.actors, "id", "number");
+    await initializeTable(db, dbconfig.rooms, "id", "number");
+
+    await loadRooms();
 
     console.log(`Complete!`);
 }
 
 export type KeyType = "string" | "number";
+
+export async function initializeTable(db: AWS.DynamoDB, name: string, key: string, keyType: KeyType) {
+    if (!await checkTableExists(db, name)) {
+        await createTable(db, name, key, keyType);
+    }
+}
+
 export function createTable(db: AWS.DynamoDB, name: string, key: string, keyType: KeyType): Promise<AWS.DynamoDB.CreateTableOutput> {
     console.log(`Creating table ${name}...`);
     const attributeType = keyType == "string" ? "S" : "N";
@@ -57,4 +70,12 @@ async function checkTableExists(db: AWS.DynamoDB, name: string): Promise<boolean
             resolve(true);
         });
     })
+}
+
+
+async function loadRooms() {
+    rooms.forEach(async r => {
+        console.log(`Inserting room: ${r.id}`);
+        await createRoom(r);
+    });
 }

@@ -1,10 +1,11 @@
 import { L } from "../utils/linq";
 import { tuple } from "../utils/index";
+import { Scriptable } from "./scriptable";
 
 
 export type Direction = "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "u" | "d";
 export type LongDirection = "north" | "northeast" | "east" | "southeast" | "south" | "southwest" | "west" | "northwest" | "up" | "down";
-export const DirectionsOrdered: Direction[] = ["n", "ne", "e", "se", "s", "sw", "w", "nw", "u", "d"];
+export const DirectionsOrdered = L(["n", "ne", "e", "se", "s", "sw", "w", "nw", "u", "d"] as Direction[]);
 
 export const DirectionNames = new Map<Direction, LongDirection>([
     ["n", "north"],
@@ -40,13 +41,13 @@ export interface Exit {
     exitroom: number;
 }
 
-export interface Room {
+export type Room = {
     id: number;
     name: string;
     description: string;
-    exits: {[index in Direction]: Exit }
-}
+    exits: {[index in Direction]?: Exit }
+} & Scriptable;
 
 export const getDirectionsInOrder = (room: Room): Iterable<[Direction, Exit]> => {
-    return L(DirectionsOrdered).select(d => tuple(d, room.exits[d])).where(e => e[1] != undefined);
+    return DirectionsOrdered.select(d => tuple(d, room.exits[d])).where(e => e[1] != undefined) as Iterable<[Direction, Exit]>;
 }

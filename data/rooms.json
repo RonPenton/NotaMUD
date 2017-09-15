@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "name": "Ashborne Town Hall",
+        "description": "This is the main meetingplace of Ashborne. Wide avenues flow off in all four cardinal directions, and many people are milling about the large fountain.",
+        "exits": {
+            "n": { "exitroom": 2 }
+        },
+        "data": {}
+    },
+    {
+        "id": 2,
+        "name": "Ashborne, North Main Street",
+        "description": "Main Street North, Ashborne. A wide and bustling avenue, filled with people milling about, and vendors shouting at you to buy their wares. You can hear the sound of livestock bussing goods to covered stalls.",
+        "exits": {
+            "s": { "exitroom": 1 }
+        },
+        "data": {}
+    }
+]
