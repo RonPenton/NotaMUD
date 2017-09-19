@@ -22,6 +22,10 @@ export async function getRoom(id: number): Promise<Room | null> {
     return getItem<Room>(dbconfig.rooms, "id", id);
 }
 
+export async function getAllRooms(): Promise<Room[]> {
+    return getAllItems<Room>(dbconfig.rooms);
+}
+
 export async function createRoom(room: Room): Promise<void> {
     return createItem(dbconfig.rooms, room);
 }
@@ -109,6 +113,18 @@ async function getItem<T>(table: string, keyName: string, key: string | number):
             }
             prepareItemFromDatabase(data.Item);
             resolve(data.Item as T);
+        });
+    });
+}
+
+async function getAllItems<T>(table: string): Promise<T[]> {
+    const input: AWS.DynamoDB.DocumentClient.ScanInput = {
+        TableName: table
+    }
+    return new Promise<T[]>((resolve, reject) => {
+        dc.scan(input, (error, data) => {
+            if(error) return reject(error);
+            resolve(data.Items as T[]);
         });
     });
 }

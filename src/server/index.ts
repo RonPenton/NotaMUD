@@ -15,7 +15,7 @@ import secrets from './secrets';
 import config, { dbconfig } from './config';
 import routes from './routes';
 import * as auth from './auth';
-import { Message } from './messages';
+import { World } from './models/world';
 
 AWS.config.update(secrets.AWSConfig);
 const awsoptions = {
@@ -62,24 +62,34 @@ io.use(passportSocketIo.authorize({
     store: dynamodb
 }));
 
-function sendMessage(socket: SocketIO.Socket, message: Message) {
-    const { type, ...rest } = message;
-    socket.emit( type, {... rest});
+start();
+
+
+async function start() {
+
+    const world = await World.create();
+
+    io.on('connection', function (socket) {
+        console.log("connected");
+        const req: express.Request = socket.request;
+
+        if (req.isUnauthenticated()) {
+            // Probably not needed because the middleware prevents unauthorized connections
+            // from getting this far. That being said, if the behavior ever changes, at least we're protected.
+            if (socket) 
+                socket.emit('access-denied', {});
+            }
+            socket.disconnect(true);
+            return;
+        }
+        const user = req.user;
+
+        world.userConnecting(user, socket);
+
+        socket.on('disconnect', function () {
+            world.userDisconnecting(user);
+            console.log("disconnected");
+        });
+    });
 }
 
-io.on('connection', function (socket) {
-    console.log("connected");
-    const req: express.Request = socket.request;
-
-    if(req.isUnauthenticated()) {
-        // Probably not needed because the middleware prevents unauthorized connections
-        // from getting this far. That being said, if the behavior ever changes, at least we're protected.
-        sendMessage(socket, { type: 'access-denied' });
-        socket.disconnect(true);
-        return;
-    }
-
-    socket.on('disconnect', function () {
-        console.log("disconnected");
-    });
-});

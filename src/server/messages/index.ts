@@ -1,4 +1,4 @@
-export type AccessDeniedMessage = {
+export type AccessDenied = {
     type: 'access-denied';
 }
 
@@ -7,5 +7,20 @@ export type ErrorMessage = {
     message: string;
 }
 
+export type UserConnected = {
+    type: 'user-connected';
+    name: string;
+    displayName: string;
+}
 
-export type Message = AccessDeniedMessage | ErrorMessage;
+export type UserDisconnected = {
+    type: 'user-disconnected';
+    name: string;
+    displayName: string;
+}
+
+export type Message =
+    AccessDenied |
+    ErrorMessage |
+    UserConnected |
+    UserDisconnected;
