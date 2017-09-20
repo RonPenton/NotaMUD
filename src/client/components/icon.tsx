@@ -1,5 +1,5 @@
-import React from 'react';
+import React from "react";
 
 export const Icon: React.SFC = () => {
-    return <img src={'./icons/battle-axe.svg'} />
+    return <img src={"./icons/battle-axe.svg"} />
 }

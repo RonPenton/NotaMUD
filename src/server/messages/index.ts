@@ -19,6 +19,11 @@ export type UserDisconnected = {
     displayName: string;
 }
 
+export type System = {
+    type: 'system';
+    message: string;
+}
+
 export type Message =
     AccessDenied |
     ErrorMessage |

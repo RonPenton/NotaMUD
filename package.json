@@ -51,6 +51,7 @@
         "cookie-parser": "^1.4.3",
         "copyfiles": "^1.2.0",
         "css-loader": "^0.28.5",
+        "decko": "^1.2.0",
         "ejs": "^2.5.7",
         "express": "^4.15.4",
         "express-session": "^1.15.5",
@@ -58,6 +59,7 @@
         "foundation-sites": "^6.4.3",
         "moment": "^2.18.1",
         "morgan": "^1.8.2",
+        "node-sass": "^4.5.3",
         "passport": "^0.4.0",
         "passport-local": "^1.0.0",
         "passport.socketio": "^3.7.0",
@@ -69,7 +71,9 @@
         "socket.io": "^2.0.3",
         "socket.io-client": "^2.0.3",
         "style-loader": "^0.18.2",
+        "ts-keycode-enum": "^1.0.4",
         "ts-loader": "^2.3.2",
+        "tslint": "^5.7.0",
         "typescript": "^2.4.2",
         "webpack": "^3.5.4"
     }

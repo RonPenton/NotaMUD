@@ -76,12 +76,11 @@ async function start() {
         if (req.isUnauthenticated()) {
             // Probably not needed because the middleware prevents unauthorized connections
             // from getting this far. That being said, if the behavior ever changes, at least we're protected.
-            if (socket) 
-                socket.emit('access-denied', {});
-            }
+            if (socket) socket.emit('access-denied', {});
             socket.disconnect(true);
             return;
         }
+
         const user = req.user;
 
         world.userConnecting(user, socket);

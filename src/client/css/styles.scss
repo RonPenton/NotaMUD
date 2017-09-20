@@ -1,0 +1,22 @@
+.game {
+    display: grid;
+    grid-template-rows: 50px auto 40px;
+    grid-template-areas: "top" "output" "input";
+    background: black;
+    height: 100vh;
+}
+
+.top-bar {
+    grid-area: top;
+}
+
+.output-area {
+    grid-area: output;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.input-area {
+    grid-area: input;
+    border-top: solid 1px white;
+    font-family: 'Roboto Mono', monospace;
+}

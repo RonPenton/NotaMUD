@@ -6,9 +6,7 @@
     <title>NotaMUD</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <link href="./foundation.min.css" rel="stylesheet">
-    <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js' ></script> -->
 </head>
 
 <body>
@@ -19,8 +17,8 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="/game">Game</a></li>
                     <% if (currentUser) { %>
-                        <li><%= currentUser.name %></li>
-                        <li><form action="/logout" method="POST"><input type="submit" value="Logout" /></form></li>
+                        <li><a href="/profile"><%= currentUser.name %></a></li>
+                        <li><form action="/logout" method="POST"><input type="submit" value="Logout" class="button small" /></form></li>
                     <% } else { %>
                         <li><a href="/login">Log in</a></li>
                         <li><a href="/signup">Sign up</a></li>
