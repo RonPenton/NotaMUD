@@ -7,9 +7,33 @@ export interface OutputAreaProps {
 }
 
 export class OutputArea extends React.Component<OutputAreaProps> {
+
+    private div: HTMLDivElement | null = null;
+    private scrolledToBottom = true;
+
     render() {
+
+        if(this.div) {
+            const t = this.div;
+            this.scrolledToBottom = Math.abs((t.scrollHeight - t.scrollTop) - t.offsetHeight) < 10;
+        }
+
         const messages = this.props.messages.map(x => <OutputMessageComponent key={x.__key} message={x} />);
-        return <div className="output-area">{messages}</div>;
+        return (
+            <div className="output-area"
+                ref={(input) => this.div = input}>
+                {messages}
+            </div>);
+    }
+
+    componentDidMount() { this.fixScroll(); }
+
+    componentDidUpdate() { this.fixScroll(); }
+
+    private fixScroll() {
+        if(this.div && this.scrolledToBottom) {
+            this.div.scrollTop = this.div.scrollHeight;
+        }
     }
 }
 

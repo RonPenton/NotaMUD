@@ -3,8 +3,8 @@
 ## Short Term
 
 - ~~Text output on client (use CSS Grid)~~
-- Auto scroll of output box. 
-    - hold position when scrolled up
+- ~~Auto scroll of output box.~~ 
+    - ~~hold position when scrolled up~~
     - Select text when mouse click/move.
     - Autofocus input box when clicking window with no selection action. 
 - world communication
@@ -12,6 +12,7 @@
 - room communication
 - room movement
 - items/inventory
+- Stat Display Widget
 - Think about extensibility engine at this point. 
 - I don't like the message type system. Fix it. 
 - Minimum password length requirement (config setting)
