@@ -2,19 +2,19 @@ export type AccessDenied = {
     type: 'access-denied';
 }
 
-export type ErrorMessage = {
-    type: 'error';
+export type Error = {
+    type: 'error-message';
     message: string;
 }
 
-export type UserConnected = {
-    type: 'user-connected';
+export type Connected = {
+    type: 'connected';
     name: string;
     displayName: string;
 }
 
-export type UserDisconnected = {
-    type: 'user-disconnected';
+export type Disconnected = {
+    type: 'disconnected';
     name: string;
     displayName: string;
 }
@@ -26,6 +26,7 @@ export type System = {
 
 export type Message =
     AccessDenied |
-    ErrorMessage |
-    UserConnected |
-    UserDisconnected;
+    Error |
+    Connected |
+    Disconnected |
+    System;

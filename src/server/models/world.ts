@@ -43,7 +43,7 @@ export class World implements Scriptable {
         if (active) {
             this.activeUsers.delete(user.name);
             this.userSockets.delete(user.name);
-            this.sendToAll({ type: 'user-disconnected', name: user.name, displayName: user.displayName });
+            this.sendToAll({ type: 'disconnected', name: user.name, displayName: user.displayName });
         }
     }
 
@@ -53,19 +53,19 @@ export class World implements Scriptable {
             this.activeUsers.delete(user.name);
             this.userSockets.delete(user.name);
             if (oldSocket) {
-                this.sendToUser(socket, { type: 'error', message: "You have been disconnected because a newer connection has logged on." });
+                this.sendToUser(socket, { type: 'error-message', message: "You have been disconnected because a newer connection has logged on." });
                 oldSocket.disconnect(true);
             }
         }
 
         if (user.suspendedUntil && user.suspendedUntil.isAfter(moment())) {
             const reason = user.suspensionReason || "No reason specified."
-            this.sendToUser(socket, { type: 'error', message: `You have been suspended for: ${reason} until ${user.suspendedUntil.toLocaleString()}` });
+            this.sendToUser(socket, { type: 'error-message', message: `You have been suspended for: ${reason} until ${user.suspendedUntil.toLocaleString()}` });
             socket.disconnect(true);
             return;
         }
 
-        this.sendToAll({ type: 'user-connected', name: user.name, displayName: user.displayName });
+        this.sendToAll({ type: 'connected', name: user.name, displayName: user.displayName });
 
         user.lastLogin = moment();
         this.activeUsers.set(user.name, user);
