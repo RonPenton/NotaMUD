@@ -1,3 +1,4 @@
+import { config } from '../config';
 import * as moment from 'moment';
 
 import { User } from "./user";
@@ -53,23 +54,25 @@ export class World implements Scriptable {
             this.activeUsers.delete(user.name);
             this.userSockets.delete(user.name);
             if (oldSocket) {
-                this.sendToUser(socket, { type: 'error-message', message: "You have been disconnected because a newer connection has logged on." });
+                this.sendToUser(oldSocket, { type: 'error', message: "You have been disconnected because a newer connection has logged on." });
+                this.sendToUser(socket, { type: 'error', message: "You are already connected in another window... disconnecting the other account..." });
                 oldSocket.disconnect(true);
             }
         }
 
         if (user.suspendedUntil && user.suspendedUntil.isAfter(moment())) {
             const reason = user.suspensionReason || "No reason specified."
-            this.sendToUser(socket, { type: 'error-message', message: `You have been suspended for: ${reason} until ${user.suspendedUntil.toLocaleString()}` });
+            this.sendToUser(socket, { type: 'error', message: `You have been suspended for: ${reason} until ${user.suspendedUntil.toLocaleString()}` });
             socket.disconnect(true);
             return;
         }
 
-        this.sendToAll({ type: 'connected', name: user.name, displayName: user.displayName });
-
         user.lastLogin = moment();
         this.activeUsers.set(user.name, user);
         this.userSockets.set(user.name, socket);
+
+        this.sendToAll({ type: 'connected', name: user.name, displayName: user.displayName });
+        this.sendToUser(socket, { type: 'system', message: config.WelcomeMessage });
     }
 
     private sendToUser(user: string, message: Messages.Message): void;
@@ -77,8 +80,7 @@ export class World implements Scriptable {
     private sendToUser(socketOrUser: SocketIO.Socket | string, message: Messages.Message) {
         const socket = isString(socketOrUser) ? this.userSockets.get(socketOrUser) : socketOrUser;
         if (socket) {
-            const { type, ...rest } = message;
-            socket.emit(type, { ...rest });
+            socket.emit('message', message);
         }
     }
 

@@ -11,9 +11,13 @@
         "clean": "rimraf ./build",
         "build-server": "tsc --project ./src/server/tsconfig.json",
         "build-client": "webpack --config ./src/client/webpack.config.js",
-        "copy-data": "copyfiles -u 4 ./node_modules/foundation-sites/dist/css/foundation.min.css ./build/public && copyfiles -u 2 ./src/client/**/*.css ./build/public && copyfiles -u 3 ./src/client/views/**/*.ejs ./build/views && copyfiles -u 2 ./src/client/**/*.svg ./build/public",
-        "test": "test",
-        "build-ts": "tsc --project ./src/client/tsconfig.json"
+        "copy-data": "npm run-script copy-foundation && npm run-script copy-css && npm run-script copy-ejs && npm run-script copy-svg",
+        "copy-foundation": "copyfiles -u 4 ./node_modules/foundation-sites/dist/css/foundation.min.css ./build/public",
+        "copy-css": "copyfiles -u 2 ./src/client/**/*.css ./build/public",
+        "copy-ejs": "copyfiles -u 3 ./src/client/views/**/*.ejs ./build/views",
+        "copy-svg": "copyfiles -u 2 ./src/client/**/*.svg ./build/public",
+        "copy-fast": "npm run-script copy-css && npm run-script copy-ejs",
+        "build-fast": "npm run-script build-client && npm run-script copy-fast"
     },
     "repository": {
         "type": "git",
@@ -33,6 +37,7 @@
         "@types/body-parser": "^1.16.4",
         "@types/connect-flash": "0.0.33",
         "@types/cookie-parser": "^1.4.0",
+        "@types/deep-freeze": "^0.1.1",
         "@types/express": "^4.0.36",
         "@types/express-session": "^1.15.2",
         "@types/morgan": "^1.7.32",
@@ -52,6 +57,7 @@
         "copyfiles": "^1.2.0",
         "css-loader": "^0.28.5",
         "decko": "^1.2.0",
+        "deep-freeze": "0.0.1",
         "ejs": "^2.5.7",
         "express": "^4.15.4",
         "express-session": "^1.15.5",

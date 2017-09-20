@@ -5,7 +5,7 @@ var extractPlugin = new ExtractTextPlugin({
 });
 
 module.exports = {
-    entry: "./src/client/client.tsx",
+    entry: "./src/client/App.tsx",
     output: {
         filename: "client.js",
         path: __dirname + "/../../build/public"

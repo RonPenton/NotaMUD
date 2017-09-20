@@ -13,14 +13,29 @@
 .output-area {
     grid-area: output;
     font-family: 'Roboto Mono', monospace;
+    padding-left: 4px;
+    padding-right: 4px;
+    overflow-y: scroll;
 }
 
 .input-area {
+    max-height: 40px;
     grid-area: input;
-    border-top: solid 1px white;
     font-family: 'Roboto Mono', monospace;
+    background: white;
+    color: black;
+    margin: 0;
+
+    .button {
+        margin: 0;
+    }
 }
 
 .generic {
     color: #eeeeee;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
 }

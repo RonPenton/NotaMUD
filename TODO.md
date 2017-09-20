@@ -2,7 +2,11 @@
 
 ## Short Term
 
-- Text output on client (use CSS Grid)
+- ~~Text output on client (use CSS Grid)~~
+- Auto scroll of output box. 
+    - hold position when scrolled up
+    - Select text when mouse click/move.
+    - Autofocus input box when clicking window with no selection action. 
 - world communication
 - rooms
 - room communication
@@ -12,6 +16,15 @@
 - I don't like the message type system. Fix it. 
 - Minimum password length requirement (config setting)
 - Move to all-in-memory storage. Might require tearing out the session and auth providers stuff.
+- Rate limiting input
+- Individual permissions banning (ie: banned from global talk)
+- Introduce an inline color code syntax for colorizing output.
+    - regex searchable
+    - small, thinking #FFF
+    - make methods to make it removable from strings for certain contexts
+    - Implement usage rates so that they are not abused. 
+    - Or perhaps a maximum amount of delta for a single message. Because a slower gradient is less jarring on the eyes than a lot of rapic chromatic changes. 
+    - ... getting carried away here.
 
 
 ## Long Term

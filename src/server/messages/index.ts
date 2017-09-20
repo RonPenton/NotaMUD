@@ -1,9 +1,5 @@
-export type AccessDenied = {
-    type: 'access-denied';
-}
-
 export type Error = {
-    type: 'error-message';
+    type: 'error';
     message: string;
 }
 
@@ -24,9 +20,15 @@ export type System = {
     message: string;
 }
 
+export type TalkGlobal = {
+    type: 'talk-global';
+    from: string;
+    message: string;
+}
+
 export type Message =
-    AccessDenied |
     Error |
     Connected |
     Disconnected |
-    System;
+    System |
+    TalkGlobal;

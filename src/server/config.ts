@@ -2,6 +2,7 @@ import { VersionNumber } from './utils/versionnumber';
 
 export const config = {
     Name: "NotaMUD",
+    WelcomeMessage: "Welcome to NotaMUD, which is not a MUD! Yet! Enjoy your stay!",
     Version: new VersionNumber(0, 0, 1),
     Port: 3061,
     Dbprefix: "notamud_",
