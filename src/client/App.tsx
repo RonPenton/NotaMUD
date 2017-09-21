@@ -35,6 +35,9 @@ export interface ClientState {
 }
 
 export class App extends React.Component<{}, ClientState> {
+
+    inputArea: InputArea | null = null;
+
     readonly socket: SocketIOClient.Socket;
     constructor() {
         super();
@@ -87,7 +90,7 @@ export class App extends React.Component<{}, ClientState> {
         return (
             <div className="game">
                 <GameHeader username={User.displayName} />
-                <OutputArea messages={this.state.messages} />
+                <OutputArea messages={this.state.messages} onFocusClick={this.focusClick} />
                 {this.getInputArea()}
             </div>
         );
@@ -95,13 +98,20 @@ export class App extends React.Component<{}, ClientState> {
 
     private getInputArea() {
         if (this.state.connectionState == "connected")
-            return <InputArea newInput={this.handleInput} />;
+            return <InputArea ref={(input) => this.inputArea = input } newInput={this.handleInput} />;
 
         const disabled = this.state.connectionState == "connecting" ? { disabled: true } : {};
         return (
             <div className="input-area">
                 <button className="button tiny" onClick={this.connectClick} {...disabled}>Connect</button>
             </div>);
+    }
+
+    @bind
+    private focusClick() {
+        if(this.inputArea) {
+            this.inputArea.focus();
+        }
     }
 
     @bind

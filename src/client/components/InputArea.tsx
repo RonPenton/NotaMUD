@@ -19,6 +19,15 @@ export class InputArea extends React.Component<InputAreaProps, InputAreaState> {
         this.state = { history: [""], currentItem: 0 };
     }
 
+    input: HTMLInputElement | null = null;
+
+    public focus() {
+        if(this.input) {
+            this.input.focus();
+            this.input.selectionStart = this.input.selectionEnd = this.input.value.length;
+        }
+    }
+
     public render() {
         return (
             <input
@@ -26,6 +35,7 @@ export class InputArea extends React.Component<InputAreaProps, InputAreaState> {
                 className="input-area"
                 onKeyUp={this.keyUp}
                 onChange={this.change}
+                ref={(input) => this.input = input}
                 value={this.state.history[this.state.currentItem]} />
         );
     }

@@ -5,7 +5,7 @@
 - ~~Text output on client (use CSS Grid)~~
 - ~~Auto scroll of output box.~~ 
     - ~~hold position when scrolled up~~
-    - Select text when mouse click/move.
+    - ~~Select text when mouse click/move.~~
     - Autofocus input box when clicking window with no selection action. 
 - world communication
 - rooms
