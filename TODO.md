@@ -6,7 +6,8 @@
 - ~~Auto scroll of output box.~~ 
     - ~~hold position when scrolled up~~
     - ~~Select text when mouse click/move.~~
-    - Autofocus input box when clicking window with no selection action. 
+    - ~~Autofocus input box when clicking window with no selection action.~~
+- Server-side Command parser
 - world communication
 - rooms
 - room communication

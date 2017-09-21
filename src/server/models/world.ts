@@ -1,3 +1,4 @@
+import { split } from '../utils/parse';
 import { config } from '../config';
 import * as moment from 'moment';
 
@@ -6,8 +7,9 @@ import { User } from "./user";
 import { Room } from "./room";
 import { Scriptable } from "./scriptable";
 import { getAllRooms } from "./db";
-import { L } from '../utils/linq';
+import { In, L } from '../utils/linq';
 import * as Messages from '../messages';
+import Message from '../messages';
 import { isString } from 'util';
 
 
@@ -73,21 +75,40 @@ export class World implements Scriptable {
 
         this.sendToAll({ type: 'connected', name: user.name, displayName: user.displayName });
         this.sendToUser(socket, { type: 'system', message: config.WelcomeMessage });
+
+        socket.on('message', (message: Message) => this.handleMessage(user, socket, message))
     }
 
-    private sendToUser(user: string, message: Messages.Message): void;
-    private sendToUser(socket: SocketIO.Socket, message: Messages.Message): void;
-    private sendToUser(socketOrUser: SocketIO.Socket | string, message: Messages.Message) {
+    private sendToUser(user: string, message: Message): void;
+    private sendToUser(socket: SocketIO.Socket, message: Message): void;
+    private sendToUser(socketOrUser: SocketIO.Socket | string, message: Message) {
         const socket = isString(socketOrUser) ? this.userSockets.get(socketOrUser) : socketOrUser;
         if (socket) {
             socket.emit('message', message);
         }
     }
 
-    private sendToAll(message: Messages.Message) {
+    private sendToAll(message: Message) {
         const users = this.userSockets.keys();
         for (let name of users) {
             this.sendToUser(name, message);
         }
+    }
+
+    private handleMessage(user: User, socket: SocketIO.Socket, message: Message) {
+        if(message.type == 'client-command') {
+            this.parseMessage(user, socket, message);
+        }
+    }
+
+    private parseMessage(user: User, _: SocketIO.Socket, message: Messages.ClientTextCommand) {
+        const { head, tail } = split(message.message);
+        const command = head.toLowerCase();
+
+        if(In(command, "ch", "chat")) {
+            this.sendToAll({ type: 'talk-global', from: user.name, fromDisplay: user.displayName, message: tail.trim()});
+            return;
+        }
+
     }
 }

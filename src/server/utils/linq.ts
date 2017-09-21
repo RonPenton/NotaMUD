@@ -11,7 +11,7 @@ export function L<T>(array: Iterable<T>): LinqContainer<T> {
     return new LinqContainer(array);
 }
 export function In<T>(item: T, ...args: T[]) {
-    return Linq(args).areAny(x => x == item);
+    return Linq(args).areAny(x => x === item);
 }
 
 export class LinqContainer<T> implements Iterable<T> {

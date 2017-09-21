@@ -15,6 +15,6 @@ export interface Action3<P1, P2, P3> { (parameter1: P1, parameter2: P2, paramete
 export interface Action4<P1, P2, P3, P4> { (parameter1: P1, parameter2: P2, parameter3: P3, parameter4: P4): void; }
 
 
-export function tuple<T,U>(t: T, u: U): [T, U] {
-    return [t,u];
+export function tuple<T, U>(t: T, u: U): [T, U] {
+    return [t, u];
 }

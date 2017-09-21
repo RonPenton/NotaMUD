@@ -129,8 +129,7 @@ export class App extends React.Component<{}, ClientState> {
     @bind
     private handleInput(command: string) {
         this.sendMessage({
-            type: 'talk-global',
-            from: User.name,
+            type: 'client-command',
             message: command
         });
     }

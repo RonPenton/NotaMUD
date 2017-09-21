@@ -23,6 +23,12 @@ export type System = {
 export type TalkGlobal = {
     type: 'talk-global';
     from: string;
+    fromDisplay: string;
+    message: string;
+}
+
+export type ClientTextCommand = {
+    type: 'client-command';
     message: string;
 }
 
@@ -31,4 +37,7 @@ export type Message =
     Connected |
     Disconnected |
     System |
-    TalkGlobal;
+    TalkGlobal |
+    ClientTextCommand;
+
+export default Message;
