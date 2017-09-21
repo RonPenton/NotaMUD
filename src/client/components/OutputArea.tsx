@@ -89,7 +89,7 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
 
 
         case 'talk-global':
-            return <GlobalChatMessage {... m} />
+            return <GlobalChatMessage {...m} />
     }
 
     return empty;
