@@ -103,7 +103,7 @@ export class App extends React.Component<{}, ClientState> {
 
     private getInputArea() {
         if (this.state.connectionState == "connected")
-            return <InputArea ref={(input) => this.inputArea = input } newInput={this.handleInput} />;
+            return <InputArea ref={(input) => this.inputArea = input} newInput={this.handleInput} />;
 
         const disabled = this.state.connectionState == "connecting" ? { disabled: true } : {};
         return (
@@ -114,7 +114,7 @@ export class App extends React.Component<{}, ClientState> {
 
     @bind
     private focusClick() {
-        if(this.inputArea) {
+        if (this.inputArea) {
             this.inputArea.focus();
         }
     }
@@ -133,11 +133,15 @@ export class App extends React.Component<{}, ClientState> {
 
     @bind
     private handleInput(command: string) {
-        this.addMessage(this.getUserInputMessage(command));
-        this.sendMessage({
-            type: 'client-command',
-            message: command
-        });
+        const text = command.trim();
+        this.addMessage(this.getUserInputMessage(text));
+
+        if (text == 'ping') {
+            this.sendMessage({ type: 'ping' });
+            return;
+        }
+
+        this.sendMessage({ type: 'client-command', message: text });
     }
 
     private sendMessage(message: Message) {

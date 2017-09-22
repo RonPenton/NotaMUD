@@ -20,8 +20,21 @@ export const ErrorMessage: React.SFC<ShowTimestamp> = (props) => {
     return <div className="message error"><TimeStamp time={props.time} />{props.children}</div>
 }
 
+export const DebugMessage: React.SFC<ShowTimestamp> = (props) => {
+    return <div className="message debug"><TimeStamp time={props.time} />{props.children}</div>
+}
+
+export class PongMessage extends React.PureComponent<{ stamp: string }> {
+    render() {
+        const now = moment();
+        const then = moment(this.props.stamp);
+        const diff = moment.duration(now.diff(then));
+        return <DebugMessage>{`[Server Latency: ${diff.asMilliseconds()}ms]`}</DebugMessage>
+    }
+}
+
 export const GlobalChatMessage: React.SFC<TimeStamped<TalkGlobal>> = props => {
-    const name = props.from == User.name ? "You chat: " : `${props.fromDisplay} chats: `;
+    const name = props.username == User.name ? "You chat: " : `${props.userDisplayname} chats: `;
     return (
         <div className="global-chat">
             <TimeStamp time={props.timeStampStr} />

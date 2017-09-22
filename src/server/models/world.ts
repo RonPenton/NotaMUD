@@ -1,4 +1,4 @@
-import { TimeStamp } from '../messages/index';
+import { TimedMessage, TimeStamp } from '../messages/index';
 import { split } from '../utils/parse';
 import { config } from '../config';
 import * as moment from 'moment';
@@ -47,7 +47,7 @@ export class World implements Scriptable {
         if (active) {
             this.activeUsers.delete(user.name);
             this.userSockets.delete(user.name);
-            this.sendToAll({ type: 'disconnected', name: user.name, displayName: user.displayName });
+            this.sendToAll({ type: 'disconnected', username: user.name, userDisplayname: user.displayName });
         }
     }
 
@@ -74,10 +74,10 @@ export class World implements Scriptable {
         this.activeUsers.set(user.name, user);
         this.userSockets.set(user.name, socket);
 
-        this.sendToAll({ type: 'connected', name: user.name, displayName: user.displayName });
+        this.sendToAll({ type: 'connected', username: user.name, userDisplayname: user.displayName });
         this.sendToUser(socket, { type: 'system', message: config.WelcomeMessage });
 
-        socket.on('message', (message: Message) => this.handleMessage(user, socket, message))
+        socket.on('message', (message: TimedMessage) => this.handleMessage(user, socket, message))
     }
 
     private sendToUser(user: string, message: Message): void;
@@ -96,9 +96,14 @@ export class World implements Scriptable {
         }
     }
 
-    private handleMessage(user: User, socket: SocketIO.Socket, message: Message) {
-        if(message.type == 'client-command') {
-            this.parseMessage(user, socket, message);
+    private handleMessage(user: User, socket: SocketIO.Socket, message: TimedMessage) {
+        switch (message.type) {
+            case 'client-command':
+                this.parseMessage(user, socket, message);
+                return;
+            case 'ping':
+                this.sendToUser(socket, { type: 'pong', originalStamp: message.timeStampStr });
+                return;
         }
     }
 
@@ -106,8 +111,8 @@ export class World implements Scriptable {
         const { head, tail } = split(message.message);
         const command = head.toLowerCase();
 
-        if(In(command, "ch", "chat")) {
-            this.sendToAll({ type: 'talk-global', from: user.name, fromDisplay: user.displayName, message: tail.trim()});
+        if (In(command, "ch", "chat")) {
+            this.sendToAll({ type: 'talk-global', username: user.name, userDisplayname: user.displayName, message: tail.trim() });
             return;
         }
 

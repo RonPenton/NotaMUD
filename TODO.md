@@ -14,7 +14,7 @@
 - ~~Timestamps on communication messages.~~
     ~~- Show timestamp on chat messages.~~
 - ~~Output user input in output panel when submitted, to make it clear where the input was received.~~
-- Ping command
+- ~~Ping command~~
 - Rooms
     - Assignment upon entering game
     - Show description when entering game
