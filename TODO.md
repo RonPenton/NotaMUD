@@ -16,9 +16,10 @@
 - ~~Output user input in output panel when submitted, to make it clear where the input was received.~~
 - ~~Ping command~~
 - ~~One Time Render component class~~
-- Better connection messaging
-    - Disconnected message
-    - Cannot connect message
+- ~~Better connection messaging~~
+    - ~~Disconnected message~~
+    - ~~Cannot connect message~~
+- Create new Actor object for new accounts in the system.
 - Rooms
     - Assignment upon entering game
     - Show description when entering game

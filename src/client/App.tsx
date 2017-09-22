@@ -36,22 +36,34 @@ export interface ClientState {
 }
 
 export class App extends React.Component<{}, ClientState> {
-
     inputArea: InputArea | null = null;
-
     readonly socket: SocketIOClient.Socket;
+
     constructor() {
         super();
-
         this.state = { messages: [this.getConnectingMessage()], connectionState: "connecting" };
-
         this.socket = io('', { transports: ['websocket'] });
-        this.setupSocket();
+        this.setupSocket(this.socket);
+    }
+
+    private getSystemMessage(message: string) {
+        return this.bundleMessage({ type: 'system', timeStampStr: moment().toISOString(), message: message });
+    }
+
+    private getErrorMessage(message: string) {
+        return this.bundleMessage({ type: 'error', timeStampStr: moment().toISOString(), message: message });
     }
 
     private getConnectingMessage() {
-        const text = "Connecting...";
-        return this.bundleMessage({ type: 'system', timeStampStr: moment().toISOString(), message: text });
+        return this.getSystemMessage("Connecting...");
+    }
+
+    private getDisconnectedMessage() {
+        return this.getErrorMessage("Disconnected!");
+    }
+
+    private getTimeoutMessage() {
+        return this.getErrorMessage("Connection timed out!");
     }
 
     private getUserInputMessage(text: string) {
@@ -67,12 +79,26 @@ export class App extends React.Component<{}, ClientState> {
         this.setState({ messages: this.state.messages.concat(bundle) });
     }
 
-    private setupSocket() {
-        this.socket.on('message', (message: TimedMessage) => {
+    private setupSocket(socket: SocketIOClient.Socket) {
+        socket.on('message', (message: TimedMessage) => {
             this.processMessageFromServer(message);
         });
 
-        this.socket.on('disconnect', () => {
+        socket.on('connect_timeout', () => {
+            this.addMessage(this.getTimeoutMessage());
+            this.setState({ connectionState: "disconnected" });
+        });
+
+        socket.on('connect_error', (error: any) => {
+            console.log(error);
+            if(this.state.connectionState != "disconnected") {
+                this.addMessage(this.getTimeoutMessage());
+                this.setState({ connectionState: "disconnected" });
+            }
+        });
+
+        socket.on('disconnect', () => {
+            this.addMessage(this.getDisconnectedMessage());
             this.setState({ connectionState: "disconnected" });
         });
     }
