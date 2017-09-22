@@ -54,6 +54,10 @@ export class App extends React.Component<{}, ClientState> {
         return this.bundleMessage({ type: 'system', timeStampStr: moment().toISOString(), message: text });
     }
 
+    private getUserInputMessage(text: string) {
+        return this.bundleMessage({ type: 'user-input', timeStampStr: moment().toISOString(), message: text });
+    }
+
     private bundleMessage(message: TimedMessage) {
         return { ...message, __key: lastMessageId++ };
     }
@@ -65,7 +69,7 @@ export class App extends React.Component<{}, ClientState> {
 
     private setupSocket() {
         this.socket.on('message', (message: TimedMessage) => {
-            this.incomingMessage(message);
+            this.processMessageFromServer(message);
         });
 
         this.socket.on('disconnect', () => {
@@ -73,7 +77,7 @@ export class App extends React.Component<{}, ClientState> {
         });
     }
 
-    private incomingMessage(message: TimedMessage) {
+    private processMessageFromServer(message: TimedMessage) {
         //TODO: kind of a weak design here. Messages that don't output to the screen need to 
         // remember to 'return' after they're handled. Think of a better way to do this.
 
@@ -129,6 +133,7 @@ export class App extends React.Component<{}, ClientState> {
 
     @bind
     private handleInput(command: string) {
+        this.addMessage(this.getUserInputMessage(command));
         this.sendMessage({
             type: 'client-command',
             message: command

@@ -13,7 +13,7 @@
 - ~~Rudimentary Server-side command parser~~
 - ~~Timestamps on communication messages.~~
     ~~- Show timestamp on chat messages.~~
-- Output user input in output panel when submitted, to make it clear where the input was received. 
+- ~~Output user input in output panel when submitted, to make it clear where the input was received.~~
 - Ping command
 - Rooms
     - Assignment upon entering game
@@ -62,6 +62,7 @@
     - Room display options (verbose v. brief)
     - Display name
     - Timestamp format
+    - Concise input mode
     - Store on server so settings travel with users to new computers/browsers
 
 # Milestone 0.3 - Actor update
@@ -211,6 +212,7 @@
 - Light/Dark/Day/Night system?
 - Hunger system?
 - Sleep/Rest system?
+- Stealth?
 
 ## Not in scope
 

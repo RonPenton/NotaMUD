@@ -1,46 +1,36 @@
 import * as moment from 'moment';
 
-export type Error = {
-    type: 'error';
-    message: string;
-}
+export type BaseMessage<T extends string> = { type: T };
+export type GenericMessage<T extends string> = BaseMessage<T> & { message: string; }
 
-export type Connected = {
-    type: 'connected';
+export type Error = GenericMessage<'error'>;
+export type System = GenericMessage<'system'>;
+export type ClientTextCommand = GenericMessage<'client-command'>;
+export type UserInput = GenericMessage<'user-input'>;
+
+export type Connected = BaseMessage<'connected'> & {
     name: string;
     displayName: string;
 }
 
-export type Disconnected = {
-    type: 'disconnected';
+export type Disconnected = BaseMessage<'disconnected'> & {
     name: string;
     displayName: string;
 }
 
-export type System = {
-    type: 'system';
-    message: string;
-}
-
-export type TalkGlobal = {
-    type: 'talk-global';
+export type TalkGlobal = GenericMessage<'talk-global'> & {
     from: string;
     fromDisplay: string;
-    message: string;
-}
-
-export type ClientTextCommand = {
-    type: 'client-command';
-    message: string;
 }
 
 export type Message =
     Error |
+    System |
+    ClientTextCommand |
+    UserInput |
     Connected |
     Disconnected |
-    System |
-    TalkGlobal |
-    ClientTextCommand;
+    TalkGlobal;
 
 type _TimeStamped = { timeStampStr: string };
 export type TimeStamped<T> = T & _TimeStamped;

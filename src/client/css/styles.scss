@@ -41,7 +41,6 @@
 }
 
 .global-chat {
-    font-weight: bold;
     color: white;
 
     .identifier {
@@ -52,4 +51,9 @@
 .timestamp {
     color: #63aad9;
     font-weight: normal;
+}
+
+.user-input {
+    color: white;
+    font-weight: bold;
 }

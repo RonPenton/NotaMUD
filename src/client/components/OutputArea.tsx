@@ -1,6 +1,6 @@
 import React from 'react';
 import { OutputMessage, User } from '../App';
-import { ErrorMessage, GenericMessage, GlobalChatMessage } from '../messages/SimpleMessages';
+import { ErrorMessage, GenericMessage, GlobalChatMessage, UserInput } from '../messages/SimpleMessages';
 import { bind } from 'decko';
 
 export interface OutputAreaProps {
@@ -75,6 +75,9 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
         case 'error':
             return <ErrorMessage>{m.message}</ErrorMessage>;
 
+        case 'user-input':
+            return <UserInput text={m.message} />
+
         case 'connected':
             if (m.name == User.name)
                 return <GenericMessage>Connected!</GenericMessage>;
@@ -86,7 +89,6 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
                 return empty;
             else    //TODO: eventually show a hyperlink to user so that you can interact in the GUI. Trade/Talk/Etc.
                 return <GenericMessage time={m.timeStampStr}>{`${m.displayName} has disconnected!`}</GenericMessage>;
-
 
         case 'talk-global':
             return <GlobalChatMessage {...m} />

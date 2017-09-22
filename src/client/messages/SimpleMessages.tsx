@@ -30,3 +30,10 @@ export const GlobalChatMessage: React.SFC<TimeStamped<TalkGlobal>> = props => {
         </div>
     );
 }
+
+export interface UserInputProps {
+    text: string;
+}
+export const UserInput: React.SFC<UserInputProps> = props => {
+    return <div className="user-input">{`${props.text}`}</div>;
+}
