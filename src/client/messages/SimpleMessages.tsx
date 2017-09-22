@@ -1,19 +1,30 @@
 import React from "react";
-import { TalkGlobal } from "../../server/messages/index";
+import * as moment from 'moment';
+
+import { TalkGlobal, TimeStamped } from '../../server/messages/index';
 import { User } from "../App";
 
-export const GenericMessage: React.SFC<{}> = (props) => {
-    return <div className="message generic">{props.children}</div>
+export type ShowTimestamp = { time?: string };
+export const TimeStamp: React.SFC<ShowTimestamp> = props => {
+    if (!props.time)
+        return null;
+    const time = moment(props.time);
+    return <span className="timestamp">{`[${time.format('LT')}] `}</span>
 }
 
-export const ErrorMessage: React.SFC<{}> = (props) => {
-    return <div className="message error">{props.children}</div>
+export const GenericMessage: React.SFC<ShowTimestamp> = (props) => {
+    return <div className="message generic"><TimeStamp time={props.time} />{props.children}</div>
 }
 
-export const GlobalChatMessage: React.SFC<TalkGlobal> = props => {
+export const ErrorMessage: React.SFC<ShowTimestamp> = (props) => {
+    return <div className="message error"><TimeStamp time={props.time} />{props.children}</div>
+}
+
+export const GlobalChatMessage: React.SFC<TimeStamped<TalkGlobal>> = props => {
     const name = props.from == User.name ? "You chat: " : `${props.fromDisplay} chats: `;
     return (
         <div className="global-chat">
+            <TimeStamp time={props.timeStampStr} />
             <span className="identifier">{name}</span>
             {props.message}
         </div>

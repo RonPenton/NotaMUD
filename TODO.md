@@ -11,10 +11,9 @@
 - ~~I don't like the message type system. Fix it.~~
     - It got better. 
 - ~~Rudimentary Server-side command parser~~
+- ~~Timestamps on communication messages.~~
+    ~~- Show timestamp on chat messages.~~
 - Output user input in output panel when submitted, to make it clear where the input was received. 
-- Timestamps on communication messages.
-    - All messages?
-    - Yeah. Why not. 
 - Ping command
 - Rooms
     - Assignment upon entering game
@@ -62,6 +61,7 @@
 - Settings system
     - Room display options (verbose v. brief)
     - Display name
+    - Timestamp format
     - Store on server so settings travel with users to new computers/browsers
 
 # Milestone 0.3 - Actor update
@@ -77,6 +77,12 @@
     - Items in room UI panel
     - Items on person UI panel
 - Actor stats
+    - A few predefined stats.
+        - Health
+        - Energy/Skill points/Mana
+        - Experience points
+        - More to come.
+    - New Stat categories can also be added by extension scripts dynamically
     - Store base value.
     - Store temporary effective value, calculated from:
         - all worn items.

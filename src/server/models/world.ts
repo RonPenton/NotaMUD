@@ -1,3 +1,4 @@
+import { TimeStamp } from '../messages/index';
 import { split } from '../utils/parse';
 import { config } from '../config';
 import * as moment from 'moment';
@@ -84,14 +85,14 @@ export class World implements Scriptable {
     private sendToUser(socketOrUser: SocketIO.Socket | string, message: Message) {
         const socket = isString(socketOrUser) ? this.userSockets.get(socketOrUser) : socketOrUser;
         if (socket) {
-            socket.emit('message', message);
+            socket.emit('message', TimeStamp(message));
         }
     }
 
     private sendToAll(message: Message) {
         const users = this.userSockets.keys();
         for (let name of users) {
-            this.sendToUser(name, message);
+            this.sendToUser(name, TimeStamp(message));
         }
     }
 

@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 export type Error = {
     type: 'error';
     message: string;
@@ -39,5 +41,13 @@ export type Message =
     System |
     TalkGlobal |
     ClientTextCommand;
+
+type _TimeStamped = { timeStampStr: string };
+export type TimeStamped<T> = T & _TimeStamped;
+export type TimedMessage = Message & _TimeStamped;
+
+export function TimeStamp(message: Message) : TimedMessage {
+    return { ...message, timeStampStr: moment().toISOString() }
+}
 
 export default Message;

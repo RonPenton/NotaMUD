@@ -1,13 +1,14 @@
 import React from "react";
 import * as ReactDOM from 'react-dom';
 import io from 'socket.io-client';
+import * as moment from 'moment';
 import { bind } from "decko";
 import * as deepFreeze from 'deep-freeze';
 
 import { GameHeader } from "./GameHeader";
 import { OutputArea } from "./components/OutputArea";
 import { InputArea } from "./components/InputArea";
-import { Message } from '../server/messages/index';
+import { Message, TimedMessage, TimeStamp } from '../server/messages/index';
 
 import './css/styles.scss';
 
@@ -21,7 +22,7 @@ export const User = deepFreeze({
     displayName: document.userDisplayname
 });
 
-export type OutputMessage = Message & {
+export type OutputMessage = TimedMessage & {
     __key: number;
 }
 
@@ -50,20 +51,20 @@ export class App extends React.Component<{}, ClientState> {
 
     private getConnectingMessage() {
         const text = "Connecting...";
-        return this.bundleMessage({ type: 'system', message: text });
+        return this.bundleMessage({ type: 'system', timeStampStr: moment().toISOString(), message: text });
     }
 
-    private bundleMessage(message: Message) {
+    private bundleMessage(message: TimedMessage) {
         return { ...message, __key: lastMessageId++ };
     }
 
-    private addMessage(message: Message) {
+    private addMessage(message: TimedMessage) {
         const bundle = this.bundleMessage(message);
         this.setState({ messages: this.state.messages.concat(bundle) });
     }
 
     private setupSocket() {
-        this.socket.on('message', (message: Message) => {
+        this.socket.on('message', (message: TimedMessage) => {
             this.incomingMessage(message);
         });
 
@@ -72,7 +73,7 @@ export class App extends React.Component<{}, ClientState> {
         });
     }
 
-    private incomingMessage(message: Message) {
+    private incomingMessage(message: TimedMessage) {
         //TODO: kind of a weak design here. Messages that don't output to the screen need to 
         // remember to 'return' after they're handled. Think of a better way to do this.
 
@@ -135,7 +136,7 @@ export class App extends React.Component<{}, ClientState> {
     }
 
     private sendMessage(message: Message) {
-        this.socket.emit('message', message);
+        this.socket.emit('message', TimeStamp(message));
     }
 }
 
