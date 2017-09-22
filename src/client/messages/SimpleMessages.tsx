@@ -3,6 +3,7 @@ import * as moment from 'moment';
 
 import { TalkGlobal, TimeStamped } from '../../server/messages/index';
 import { User } from "../App";
+import OneTimeRender from "../components/OneTimeRender";
 
 export type ShowTimestamp = { time?: string };
 export const TimeStamp: React.SFC<ShowTimestamp> = props => {
@@ -24,7 +25,7 @@ export const DebugMessage: React.SFC<ShowTimestamp> = (props) => {
     return <div className="message debug"><TimeStamp time={props.time} />{props.children}</div>
 }
 
-export class PongMessage extends React.PureComponent<{ stamp: string }> {
+export class PongMessage extends OneTimeRender<{ stamp: string }> {
     render() {
         const now = moment();
         const then = moment(this.props.stamp);

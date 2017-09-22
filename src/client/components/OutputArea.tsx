@@ -1,5 +1,4 @@
 import React from 'react';
-import * as moment from 'moment';
 import { bind } from 'decko';
 
 import { OutputMessage, User } from '../App';

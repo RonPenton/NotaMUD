@@ -15,6 +15,10 @@
     ~~- Show timestamp on chat messages.~~
 - ~~Output user input in output panel when submitted, to make it clear where the input was received.~~
 - ~~Ping command~~
+- ~~One Time Render component class~~
+- Better connection messaging
+    - Disconnected message
+    - Cannot connect message
 - Rooms
     - Assignment upon entering game
     - Show description when entering game
@@ -24,9 +28,6 @@
     - Show description upon entering room
     - Keypad navigation
     - Movement timer (or can this be tied into rate limiting inputs?)
-- Better connection messaging
-    - Disconnected message
-    - Cannot connect message
 - Move auth system to in-memory provider. Might need to write a custom provider to do this.
     - Bother.
 - Public Server
