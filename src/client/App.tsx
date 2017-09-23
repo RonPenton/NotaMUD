@@ -18,7 +18,7 @@ declare var document: {
 } & Document;
 
 export const User = deepFreeze({
-    name: document.username,
+    uniquename: document.username,
     displayName: document.userDisplayname
 });
 

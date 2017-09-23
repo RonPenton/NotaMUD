@@ -35,7 +35,7 @@ export class PongMessage extends OneTimeRender<{ stamp: string }> {
 }
 
 export const GlobalChatMessage: React.SFC<TimeStamped<TalkGlobal>> = props => {
-    const name = props.username == User.name ? "You chat: " : `${props.userDisplayname} chats: `;
+    const name = props.uniquename == User.uniquename ? "You chat: " : `${props.name} chats: `;
     return (
         <div className="global-chat">
             <TimeStamp time={props.timeStampStr} />

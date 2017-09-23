@@ -3,11 +3,10 @@ import { split } from '../utils/parse';
 import { config } from '../config';
 import * as moment from 'moment';
 
-import { User } from "./user";
-// import { Actor } from "./actor";
+import { getCanonicalName, User, Actor, isUser } from './user';
 import { Room } from "./room";
 import { Scriptable } from "./scriptable";
-import { getAllRooms } from "./db";
+import { Rooms, Actors } from "./db";
 import { In, L } from '../utils/linq';
 import * as Messages from '../messages';
 import Message from '../messages';
@@ -17,45 +16,57 @@ import { isString } from 'util';
 export class World implements Scriptable {
 
     static async create(): Promise<World> {
-        const rooms = L(await getAllRooms()).toMap(x => x.id);
+        const rooms = L(await Rooms.getAll()).toMap(x => x.id);
+        const actors = L(await Actors.getAll()).toMap(x => x.id);
 
-        return new World(rooms);
+        return new World(rooms, actors);
     }
 
-    private users = new Map<string, User>();
+    private constructor(
+        private readonly rooms: Map<number, Room>,
+        public readonly actors: Map<number, Actor>) {
+
+            const users = L(actors.values()).where(x => isUser(x)).toArray() as User[];
+            this.users = L(users).toMap(u => u.uniquename);
+    }
+
+    private readonly users = new Map<string, User>();
+    private nextActorId: number = 0;
+    public getNextActorId(): number { return this.nextActorId++; }
+
     private activeUsers = new Map<string, User>();
     private userSockets = new Map<string, SocketIO.Socket>();
 
+    public getUser(name: string): User | undefined {
+        console.log(this.rooms);    //TODO REMOVE
+        return this.users.get(getCanonicalName(name));
+    }
+
     // private actors = new Map<number, Actor>();
-    readonly rooms = new Map<number, Room>();
 
     public data: { [index: string]: any } = [];
 
-    private constructor(rooms: Map<number, Room>) {
-        this.rooms = rooms;
-    }
-
     public userCreated(user: User) {
-        if (this.users.has(user.name))
+        if (this.users.has(user.uniquename))
             throw new Error("Cannot add user to world, username taken.");
 
-        this.users.set(user.name, user);
+        this.users.set(user.uniquename, user);
     }
 
     public userDisconnecting(user: User) {
-        const active = this.activeUsers.get(user.name)
+        const active = this.activeUsers.get(user.uniquename)
         if (active) {
-            this.activeUsers.delete(user.name);
-            this.userSockets.delete(user.name);
-            this.sendToAll({ type: 'disconnected', username: user.name, userDisplayname: user.displayName });
+            this.activeUsers.delete(user.uniquename);
+            this.userSockets.delete(user.uniquename);
+            this.sendToAll({ type: 'disconnected', uniquename: user.uniquename, name: user.name });
         }
     }
 
     public userConnecting(user: User, socket: SocketIO.Socket) {
-        if (this.activeUsers.has(user.name)) {
-            const oldSocket = this.userSockets.get(user.name);
-            this.activeUsers.delete(user.name);
-            this.userSockets.delete(user.name);
+        if (this.activeUsers.has(user.uniquename)) {
+            const oldSocket = this.userSockets.get(user.uniquename);
+            this.activeUsers.delete(user.uniquename);
+            this.userSockets.delete(user.uniquename);
             if (oldSocket) {
                 this.sendToUser(oldSocket, { type: 'error', message: "You have been disconnected because a newer connection has logged on." });
                 this.sendToUser(socket, { type: 'error', message: "You are already connected in another window... disconnecting the other account..." });
@@ -71,10 +82,10 @@ export class World implements Scriptable {
         }
 
         user.lastLogin = moment();
-        this.activeUsers.set(user.name, user);
-        this.userSockets.set(user.name, socket);
+        this.activeUsers.set(user.uniquename, user);
+        this.userSockets.set(user.uniquename, socket);
 
-        this.sendToAll({ type: 'connected', username: user.name, userDisplayname: user.displayName });
+        this.sendToAll({ type: 'connected', uniquename: user.uniquename, name: user.name });
         this.sendToUser(socket, { type: 'system', message: config.WelcomeMessage });
 
         socket.on('message', (message: TimedMessage) => this.handleMessage(user, socket, message))
@@ -112,7 +123,7 @@ export class World implements Scriptable {
         const command = head.toLowerCase();
 
         if (In(command, "ch", "chat")) {
-            this.sendToAll({ type: 'talk-global', username: user.name, userDisplayname: user.displayName, message: tail.trim() });
+            this.sendToAll({ type: 'talk-global', uniquename: user.uniquename, name: user.name, message: tail.trim() });
             return;
         }
 

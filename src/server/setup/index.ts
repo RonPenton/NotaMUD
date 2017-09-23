@@ -3,7 +3,7 @@ import * as AWS from 'aws-sdk';
 import secrets from '../secrets';
 import config, { dbconfig } from '../config';
 import { Room } from '../models/room';
-import { createRoom } from '../models/db';
+import { Rooms } from '../models/db';
 
 const rooms: Room[] = require("../../data/rooms.json");
 
@@ -16,7 +16,6 @@ export async function init() {
 
     console.log(`Initializing ${config.Name} verison ${config.Version.toString()}...`);
 
-    await initializeTable(db, dbconfig.users, "name", "string");
     await initializeTable(db, dbconfig.actors, "id", "number");
     await initializeTable(db, dbconfig.rooms, "id", "number");
 
@@ -72,10 +71,9 @@ async function checkTableExists(db: AWS.DynamoDB, name: string): Promise<boolean
     })
 }
 
-
 async function loadRooms() {
     rooms.forEach(async r => {
         console.log(`Inserting room: ${r.id}`);
-        await createRoom(r);
+        await Rooms.create(r);
     });
 }

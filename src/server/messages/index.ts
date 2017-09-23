@@ -3,8 +3,8 @@ import * as moment from 'moment';
 export type BaseMessage<T extends string> = { type: T };
 export type GenericMessage<T extends string> = BaseMessage<T> & { message: string; }
 export type ConcerningUser = {
-    username: string;
-    userDisplayname: string;
+    uniquename: string;
+    name: string;
 }
 
 type _TimeStamped = { timeStampStr: string };

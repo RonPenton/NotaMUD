@@ -14,7 +14,6 @@ export const config = {
 
 export const dbconfig = {
     session: `${config.Dbprefix}session`,
-    users: `${config.Dbprefix}user`,
     rooms: `${config.Dbprefix}room`,
     actors: `${config.Dbprefix}actor`
 }

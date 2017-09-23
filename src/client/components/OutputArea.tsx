@@ -83,16 +83,16 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
             return <PongMessage stamp={m.originalStamp}></PongMessage>;
 
         case 'connected':
-            if (m.username == User.name)
+            if (m.uniquename == User.uniquename)
                 return <GenericMessage>Connected!</GenericMessage>;
             else    //TODO: eventually show a hyperlink to user so that you can interact in the GUI. Trade/Talk/Etc.
-                return <GenericMessage time={m.timeStampStr}>{`${m.userDisplayname} has entered the game!`}</GenericMessage>;
+                return <GenericMessage time={m.timeStampStr}>{`${m.name} has entered the game!`}</GenericMessage>;
 
         case 'disconnected':
-            if (m.username == User.name)
+            if (m.uniquename == User.uniquename)
                 return empty;
             else    //TODO: eventually show a hyperlink to user so that you can interact in the GUI. Trade/Talk/Etc.
-                return <GenericMessage time={m.timeStampStr}>{`${m.userDisplayname} has disconnected!`}</GenericMessage>;
+                return <GenericMessage time={m.timeStampStr}>{`${m.name} has disconnected!`}</GenericMessage>;
 
         case 'talk-global':
             return <GlobalChatMessage {...m} />

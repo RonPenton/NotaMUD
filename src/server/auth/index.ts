@@ -3,8 +3,8 @@ import * as passport_local from "passport-local";
 import * as bcrypt from 'bcrypt-nodejs';
 import { ErrorRequestHandler } from 'express';
 import * as moment from 'moment';
-import { getUser } from '../models/db';
 import User from '../models/user';
+import { World } from "../models/world";
 const LocalStrategy = passport_local.Strategy;
 
 export const hash = (password: string): Promise<string> => {
@@ -31,14 +31,14 @@ export const catchAuthErrorsMiddleware: ErrorRequestHandler = (err, req, res, ne
 export const MISSING_USER_RECORD = "Missing User Record";
 export const BANNED = "User is banned";
 
-export const init = () => {
+export const init = (world: World) => {
     passport.serializeUser<User, string>(function (user, done) {
-        done(null, user.name);
+        done(null, user.uniquename);
     });
 
     passport.deserializeUser<User, string>(async function (id, done) {
         try {
-            const user = await getUser(id);
+            const user = world.getUser(id);
             if (!user) {
                 return done(MISSING_USER_RECORD);
             }
@@ -53,7 +53,7 @@ export const init = () => {
     });
 
     passport.use("login", new LocalStrategy(async function (username, password, done) {
-        const user = await getUser(username);
+        const user = await world.getUser(username);
         if (!user) {
             return done(null, false, { message: "No user has that username!" });
         }

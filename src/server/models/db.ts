@@ -1,7 +1,7 @@
 import * as AWS from 'aws-sdk';
 import * as moment from 'moment';
 
-import User, { getCanonicalName } from './user';
+import { Actor } from './user';
 import secrets from '../secrets';
 import { dbconfig } from '../config';
 import { Room } from './room';
@@ -10,25 +10,19 @@ AWS.config.update(secrets.AWSConfig);
 
 const dc = new AWS.DynamoDB.DocumentClient();
 
-export async function getUser(name: string): Promise<User | null> {
-    return getItem<User>(dbconfig.users, "name", getCanonicalName(name));
+type KeyType = string | number;
+
+function dbAccessor<T, K extends KeyType>(dbname: string, keyname: string, keyprotector?: (key: K) => K) {
+    const kp = keyprotector || ((key: K) => key);
+    return {
+        get: async (id: K) => getItem<T>(dbname, keyname, kp(id)),
+        getAll: async () => getAllItems<T>(dbname),
+        create: async (item: T) => createItem(dbname, item)
+    }
 }
 
-export async function createUser(user: User): Promise<void> {
-    return createItem(dbconfig.users, user);
-}
-
-export async function getRoom(id: number): Promise<Room | null> {
-    return getItem<Room>(dbconfig.rooms, "id", id);
-}
-
-export async function getAllRooms(): Promise<Room[]> {
-    return getAllItems<Room>(dbconfig.rooms);
-}
-
-export async function createRoom(room: Room): Promise<void> {
-    return createItem(dbconfig.rooms, room);
-}
+export const Actors = dbAccessor<Actor, number>(dbconfig.actors, "id");
+export const Rooms = dbAccessor<Room, number>(dbconfig.rooms, "id");
 
 
 // Stolen from moment.js
@@ -98,7 +92,7 @@ async function createItem<T>(table: string, item: T): Promise<void> {
     });
 };
 
-async function getItem<T>(table: string, keyName: string, key: string | number): Promise<T> {
+async function getItem<T>(table: string, keyName: string, key: KeyType): Promise<T> {
     const keyObject: any = {};
     keyObject[keyName] = key;
     const params = {

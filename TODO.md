@@ -19,18 +19,25 @@
 - ~~Better connection messaging~~
     - ~~Disconnected message~~
     - ~~Cannot connect message~~
-- Create new Actor object for new accounts in the system.
+- ~~Move to React 16~~
+- ~~Condense Actors and Users into the same DB entity, since they are conceptually identical.~~
+- ~~Move auth system to in-memory provider. Might need to write a custom provider to do this.~~
+    - ~~Load actors into memory on game load.~~
+    - ~~Retain largest actor ID for new actor creation.~~
+- ~~Create new Actor object for new accounts in the system.~~
+    - ~~Assign starting room on new account creation.~~
 - Rooms
-    - Assignment upon entering game
-    - Show description when entering game
+    - Show room description when entering game
     - look command to view contents of room
-    - communication
+    - "Brief Look" command.
+        - Shows room name, items, exits. 
+        - "Enter" in the client sends a brief look.
+    - Room communication, "say" command. 
+        - Default to "say" if no token parsed. 
     - movement
     - Show description upon entering room
     - Keypad navigation
     - Movement timer (or can this be tied into rate limiting inputs?)
-- Move auth system to in-memory provider. Might need to write a custom provider to do this.
-    - Bother.
 - Public Server
     - Beanstalk?
     - Automated or One Command deploy.
@@ -43,6 +50,12 @@
         - room indicates react component to use.
         - IE "bank" would send "BankContextComponent", which loads a bar that allows you to quickly withdraw or deposit money. 
     - Minimap.
+- Icon Badges update
+    - Support arbitrary colored badges
+    - Support placement of multiple badges.
+    - List-based placement.
+        - Starting corner
+        - Flow direction
 - Minimap
     - Figure out how to represent up/down links on the map. 
     - Limited A* navigation by clicking on minimap.
@@ -52,6 +65,7 @@
         - Maybe store in cloud db until such a time as it becomes an actual problem.
         - Also consider ways to optimize data storage. Consider storing visited ranges. 
             - Many rooms are clustered into areas and will have closely-numbered indicies. Saying you've visited 1-100 is a lot better than 1, 2, 3, 4, ...100. Dynamically rechunk ranges as rooms are visited. 
+            - Consider bitvectors as well. Probably won't make the cut due to JSON serialization issues, but still worth a look.
         - Map system assumes all rooms are laid out on a consistent cartisian 3D grid, with room 0 starting at (0,0,0), conceptually.
             - all cartesian coordinates are calculated based on walking recursively through the map and taking note of the steps required to reach each room.
             - Two separate rooms with identical coordinates will cause an assertion failure.
@@ -105,6 +119,10 @@
 
 # Milestone 0.4 - Infrastructure update
 
+- Figure out the fuckiness with the login system.
+    - Signup should log you in. But it randomly doesn't. 
+    - Logging in with invalid credentials only shows an error half the time.
+    - WTF?
 - Player Roles
     - Owner > Admin > Op > Player.
         - For most intents and purposes, Admin = Owner. Except Admin cannot demote Owner. 
