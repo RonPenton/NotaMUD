@@ -2,7 +2,14 @@ import React from 'react';
 import { bind } from 'decko';
 
 import { OutputMessage, User } from '../App';
-import { ErrorMessage, GenericMessage, GlobalChatMessage, UserInput, PongMessage } from '../messages/SimpleMessages';
+import {
+    ErrorMessage,
+    GenericMessage,
+    GlobalChatMessage,
+    PongMessage,
+    RoomDescriptionMessage,
+    UserInput,
+} from '../messages/SimpleMessages';
 
 export interface OutputAreaProps {
     messages: OutputMessage[];
@@ -96,6 +103,9 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
 
         case 'talk-global':
             return <GlobalChatMessage {...m} />
+
+        case 'room-description':
+            return <RoomDescriptionMessage {...m} />
     }
 
     return empty;

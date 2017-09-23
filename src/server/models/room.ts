@@ -41,11 +41,15 @@ export interface Exit {
     exitroom: number;
 }
 
-export type Room = {
+export type RoomClientData = {
     id: number;
     name: string;
+    exits: {[index in Direction]?: Exit };
+    description?: string;
+}
+
+export type Room = RoomClientData & {
     description: string;
-    exits: {[index in Direction]?: Exit }
 } & Scriptable;
 
 export const getDirectionsInOrder = (room: Room): Iterable<[Direction, Exit]> => {

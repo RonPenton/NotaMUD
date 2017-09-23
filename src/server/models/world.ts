@@ -26,8 +26,8 @@ export class World implements Scriptable {
         private readonly rooms: Map<number, Room>,
         public readonly actors: Map<number, Actor>) {
 
-            const users = L(actors.values()).where(x => isUser(x)).toArray() as User[];
-            this.users = L(users).toMap(u => u.uniquename);
+        const users = L(actors.values()).where(x => isUser(x)).toArray() as User[];
+        this.users = L(users).toMap(u => u.uniquename);
     }
 
     private readonly users = new Map<string, User>();
@@ -87,6 +87,7 @@ export class World implements Scriptable {
 
         this.sendToAll({ type: 'connected', uniquename: user.uniquename, name: user.name });
         this.sendToUser(socket, { type: 'system', message: config.WelcomeMessage });
+        this.sendRoomDescription(user);
 
         socket.on('message', (message: TimedMessage) => this.handleMessage(user, socket, message))
     }
@@ -115,6 +116,8 @@ export class World implements Scriptable {
             case 'ping':
                 this.sendToUser(socket, { type: 'pong', originalStamp: message.timeStampStr });
                 return;
+            case 'look':
+                return this.look(user, message);
         }
     }
 
@@ -126,6 +129,30 @@ export class World implements Scriptable {
             this.sendToAll({ type: 'talk-global', uniquename: user.uniquename, name: user.name, message: tail.trim() });
             return;
         }
+    }
 
+    private look(user: User, message: Messages.Look) {
+        if(message.subject) {
+            //TODO
+            return;
+        }
+        this.sendRoomDescription(user, message.brief);
+    }
+
+    private sendRoomDescription(user: User, brief?: boolean, room?: Room) {
+        const r = room || this.rooms.get(user.roomid);
+        if (!r) {
+            console.log("Error: Could not find room user is in");
+            //TODO: eventually log this better.
+            return; // who knows.
+        }
+
+        this.sendToUser(user.uniquename, {
+            type: 'room-description',
+            id: r.id,
+            name: r.name,
+            description: brief ? undefined : r.description,
+            exits: r.exits
+        });
     }
 }

@@ -64,3 +64,22 @@
     font-weight: bold;
     display: inline-block;
 }
+
+.room {
+    color: #EEE;
+
+    .name {
+        color: #009400;
+        font-weight: bold;
+    }
+
+    .exits {
+        color: #63aad9;
+    }
+
+    .exit-text {
+        color: #63aad9;
+        font-weight: bold;
+    }
+}
+

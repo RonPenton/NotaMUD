@@ -1,3 +1,4 @@
+import { split } from '../server/utils/parse';
 import React from "react";
 import * as ReactDOM from 'react-dom';
 import io from 'socket.io-client';
@@ -11,15 +12,16 @@ import { InputArea } from "./components/InputArea";
 import { Message, TimedMessage, TimeStamp } from '../server/messages/index';
 
 import './css/styles.scss';
+import { In } from "../server/utils/linq";
 
 declare var document: {
-    username: string;
-    userDisplayname: string;
+    uniquename: string;
+    name: string;
 } & Document;
 
 export const User = deepFreeze({
-    uniquename: document.username,
-    displayName: document.userDisplayname
+    uniquename: document.uniquename,
+    name: document.name
 });
 
 export type OutputMessage = TimedMessage & {
@@ -91,7 +93,7 @@ export class App extends React.Component<{}, ClientState> {
 
         socket.on('connect_error', (error: any) => {
             console.log(error);
-            if(this.state.connectionState != "disconnected") {
+            if (this.state.connectionState != "disconnected") {
                 this.addMessage(this.getTimeoutMessage());
                 this.setState({ connectionState: "disconnected" });
             }
@@ -120,7 +122,7 @@ export class App extends React.Component<{}, ClientState> {
     public render() {
         return (
             <div className="game">
-                <GameHeader username={User.displayName} />
+                <GameHeader username={User.name} />
                 <OutputArea messages={this.state.messages} onFocusClick={this.focusClick} />
                 {this.getInputArea()}
             </div>
@@ -160,10 +162,23 @@ export class App extends React.Component<{}, ClientState> {
     @bind
     private handleInput(command: string) {
         const text = command.trim();
+
+        if (!text) {
+            // send a "brief look" command if user presses "enter", to get bearing on their surroundings.
+            this.sendMessage({ type: 'look', brief: true });
+            return;
+        }
+
+        const { head, tail } = split(text);
         this.addMessage(this.getUserInputMessage(text));
 
-        if (text == 'ping') {
+        if (head == 'ping') {
             this.sendMessage({ type: 'ping' });
+            return;
+        }
+
+        if (In(head, 'l', 'lool')) {
+            this.sendMessage({ type: 'look', subject: tail })
             return;
         }
 

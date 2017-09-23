@@ -27,17 +27,14 @@
 - ~~Create new Actor object for new accounts in the system.~~
     - ~~Assign starting room on new account creation.~~
 - Rooms
-    - Show room description when entering game
-    - look command to view contents of room
-    - "Brief Look" command.
-        - Shows room name, items, exits. 
-        - "Enter" in the client sends a brief look.
+    - ~~Show room description when entering game~~
+    - ~~look command to view contents of room~~
+    - ~~"Brief Look" command.~~
     - Room communication, "say" command. 
         - Default to "say" if no token parsed. 
     - movement
     - Show description upon entering room
     - Keypad navigation
-    - Movement timer (or can this be tied into rate limiting inputs?)
 - Public Server
     - Beanstalk?
     - Automated or One Command deploy.
@@ -146,6 +143,7 @@
     - Only ever incremented while game is running.
         - Unfortunately will be out of sync with real-world time
         - But we don't want timers to have expired while the server is down. Could result in unstable game state and unpredictable behavior.
+    - Movement timer (or can this be tied into rate limiting inputs?)
 
 # Milestone 0.5 - Extensibility update
 

@@ -1,4 +1,5 @@
 import * as moment from 'moment';
+import { RoomClientData } from '../models/room';
 
 export type BaseMessage<T extends string> = { type: T };
 export type GenericMessage<T extends string> = BaseMessage<T> & { message: string; }
@@ -23,6 +24,8 @@ export type Disconnected = BaseMessage<'disconnected'> & ConcerningUser;
 export type TalkGlobal = GenericMessage<'talk-global'> & ConcerningUser;
 export type Ping = BaseMessage<'ping'>;
 export type Pong = BaseMessage<'pong'> & { originalStamp: string };
+export type Look = BaseMessage<'look'> & { brief?: boolean, subject?: string };
+export type RoomDescription = BaseMessage<'room-description'> & RoomClientData & { notInRoom?: boolean };
 
 export type Message =
     Error |
@@ -32,6 +35,7 @@ export type Message =
     Connected |
     Disconnected |
     TalkGlobal |
-    Ping | Pong;
+    Ping | Pong |
+    Look | RoomDescription;
 
 export default Message;
