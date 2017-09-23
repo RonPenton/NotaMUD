@@ -4,7 +4,7 @@ import * as moment from 'moment';
 import { Actor } from './user';
 import secrets from '../secrets';
 import { dbconfig } from '../config';
-import { Room } from './room';
+import { DBRoom } from './room';
 
 AWS.config.update(secrets.AWSConfig);
 
@@ -22,7 +22,7 @@ function dbAccessor<T, K extends KeyType>(dbname: string, keyname: string, keypr
 }
 
 export const Actors = dbAccessor<Actor, number>(dbconfig.actors, "id");
-export const Rooms = dbAccessor<Room, number>(dbconfig.rooms, "id");
+export const Rooms = dbAccessor<DBRoom, number>(dbconfig.rooms, "id");
 
 
 // Stolen from moment.js

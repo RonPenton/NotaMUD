@@ -2,14 +2,10 @@ import React from 'react';
 import { bind } from 'decko';
 
 import { OutputMessage, User } from '../App';
-import {
-    ErrorMessage,
-    GenericMessage,
-    GlobalChatMessage,
-    PongMessage,
-    RoomDescriptionMessage,
-    UserInput,
-} from '../messages/SimpleMessages';
+import * as Talk from './messages/talk';
+import * as Debug from './messages/debug';
+import * as Room from './messages/room';
+import * as Simple from './messages/simple';
 
 export interface OutputAreaProps {
     messages: OutputMessage[];
@@ -78,34 +74,36 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
     const m = props.message;
     switch (m.type) {
         case 'system':
-            return <GenericMessage>{m.message}</GenericMessage>;
+            return <Simple.Generic>{m.message}</Simple.Generic>;
 
         case 'error':
-            return <ErrorMessage>{m.message}</ErrorMessage>;
+            return <Simple.Error>{m.message}</Simple.Error>;
 
         case 'user-input':
-            return <UserInput text={m.message} />
+            return <Simple.UserInput text={m.message} />
 
         case 'pong':
-            return <PongMessage stamp={m.originalStamp}></PongMessage>;
+            return <Debug.Pong stamp={m.originalStamp}></Debug.Pong>;
 
         case 'connected':
             if (m.uniquename == User.uniquename)
-                return <GenericMessage>Connected!</GenericMessage>;
+                return <Simple.Generic>Connected!</Simple.Generic>;
             else    //TODO: eventually show a hyperlink to user so that you can interact in the GUI. Trade/Talk/Etc.
-                return <GenericMessage time={m.timeStampStr}>{`${m.name} has entered the game!`}</GenericMessage>;
+                return <Simple.Generic time={m.timeStampStr}>{`${m.name} has entered the game!`}</Simple.Generic>;
 
         case 'disconnected':
             if (m.uniquename == User.uniquename)
                 return empty;
             else    //TODO: eventually show a hyperlink to user so that you can interact in the GUI. Trade/Talk/Etc.
-                return <GenericMessage time={m.timeStampStr}>{`${m.name} has disconnected!`}</GenericMessage>;
+                return <Simple.Generic time={m.timeStampStr}>{`${m.name} has disconnected!`}</Simple.Generic>;
 
         case 'talk-global':
-            return <GlobalChatMessage {...m} />
+            return <Talk.Global {...m} />
+        case 'talk-room':
+            return <Talk.Room {...m} />
 
         case 'room-description':
-            return <RoomDescriptionMessage {...m} />
+            return <Room.Description {...m} />
     }
 
     return empty;

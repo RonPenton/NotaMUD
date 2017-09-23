@@ -2,10 +2,10 @@ import * as AWS from 'aws-sdk';
 
 import secrets from '../secrets';
 import config, { dbconfig } from '../config';
-import { Room } from '../models/room';
+import { DBRoom } from '../models/room';
 import { Rooms } from '../models/db';
 
-const rooms: Room[] = require("../../data/rooms.json");
+const rooms: DBRoom[] = require("../../data/rooms.json");
 
 AWS.config.update(secrets.AWSConfig);
 

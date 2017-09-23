@@ -17,11 +17,13 @@ import { In } from "../server/utils/linq";
 declare var document: {
     uniquename: string;
     name: string;
+    actorid: number;
 } & Document;
 
 export const User = deepFreeze({
     uniquename: document.uniquename,
-    name: document.name
+    name: document.name,
+    id: document.actorid
 });
 
 export type OutputMessage = TimedMessage & {

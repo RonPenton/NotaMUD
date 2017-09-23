@@ -30,11 +30,14 @@
     - ~~Show room description when entering game~~
     - ~~look command to view contents of room~~
     - ~~"Brief Look" command.~~
-    - Room communication, "say" command. 
-        - Default to "say" if no token parsed. 
+    - ~~Room communication, "say" command. ~~
+        - ~~Default to "say" if no token parsed. ~~
+    - Show users in room descriptions.
     - movement
-    - Show description upon entering room
+    - ~~Show description upon entering room~~
     - Keypad navigation
+- Private talk
+- Reorganize Message Components
 - Public Server
     - Beanstalk?
     - Automated or One Command deploy.
@@ -132,6 +135,8 @@
         - Update entire database at specific intervals? Might result in "shuddering".
         - Update parts of database at smaller intervals? Might result in data inconsistency.
         - Track entities which have been altered and only update those? Possibly the best solution, though more technically complex.
+    - Create a serializer that strips out extra properties contained on DB items which shouldn't go into the schema.
+        - Room.actors Set, for example.
 - Additional Admin commands
     - Shut down server.
     - Disconnect user.
@@ -158,7 +163,7 @@
             - Consider insertion-sort, since list of output components will be almost entirely sorted already.
     - Ability to add new emotes.
 
-# Milestone 0.6 - UI quality-of-life improvements
+# Milestone 0.6 - Quality-of-life improvements
 
 - Introduce an inline color code syntax for colorizing output.
     - regex searchable
@@ -168,6 +173,7 @@
     - Or perhaps a maximum amount of delta for a single message. Because a slower gradient is less jarring on the eyes than a lot of rapic chromatic changes. 
     - ... getting carried away here.
 - URL detection and hyperlink insertion in chat messages.
+- Retain last X global chats (configurable) to allow a user to review the last few bits of conversation.
 
 ## Milestone 0.7 - Rooms Update 2
 

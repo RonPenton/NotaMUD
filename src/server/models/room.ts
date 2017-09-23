@@ -1,6 +1,7 @@
 import { L } from "../utils/linq";
 import { tuple } from "../utils/index";
 import { Scriptable } from "./scriptable";
+import { Actor } from "./user";
 
 
 export type Direction = "n" | "ne" | "e" | "se" | "s" | "sw" | "w" | "nw" | "u" | "d";
@@ -41,17 +42,31 @@ export interface Exit {
     exitroom: number;
 }
 
-export type RoomClientData = {
+export type RoomBaseData = {
     id: number;
     name: string;
     exits: {[index in Direction]?: Exit };
     description?: string;
 }
 
-export type Room = RoomClientData & {
+export const isRoom = (item: Room | Actor): item is Room => {
+    if ((<Room>item).exits)
+        return true;
+    return false;
+}
+
+export type RoomClientData = RoomBaseData & {
+
+}
+
+export type DBRoom = RoomBaseData & {
     description: string;
 } & Scriptable;
 
-export const getDirectionsInOrder = (room: Room): Iterable<[Direction, Exit]> => {
+export type Room = DBRoom & {
+    actors: Set<Actor>;
+}
+
+export const getDirectionsInOrder = (room: RoomBaseData): Iterable<[Direction, Exit]> => {
     return DirectionsOrdered.select(d => tuple(d, room.exits[d])).where(e => e[1] != undefined) as Iterable<[Direction, Exit]>;
 }

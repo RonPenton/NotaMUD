@@ -4,7 +4,7 @@ import { config } from '../config';
 import * as moment from 'moment';
 
 import { getCanonicalName, User, Actor, isUser } from './user';
-import { Room } from "./room";
+import { Room, isRoom, Direction } from "./room";
 import { Scriptable } from "./scriptable";
 import { Rooms, Actors } from "./db";
 import { In, L } from '../utils/linq';
@@ -16,7 +16,9 @@ import { isString } from 'util';
 export class World implements Scriptable {
 
     static async create(): Promise<World> {
-        const rooms = L(await Rooms.getAll()).toMap(x => x.id);
+        const rooms = L(await Rooms.getAll())
+            .select(x => { return { ...x, actors: new Set<Actor>() } })
+            .toMap(x => x.id);
         const actors = L(await Actors.getAll()).toMap(x => x.id);
 
         return new World(rooms, actors);
@@ -38,11 +40,8 @@ export class World implements Scriptable {
     private userSockets = new Map<string, SocketIO.Socket>();
 
     public getUser(name: string): User | undefined {
-        console.log(this.rooms);    //TODO REMOVE
         return this.users.get(getCanonicalName(name));
     }
-
-    // private actors = new Map<number, Actor>();
 
     public data: { [index: string]: any } = [];
 
@@ -58,6 +57,7 @@ export class World implements Scriptable {
         if (active) {
             this.activeUsers.delete(user.uniquename);
             this.userSockets.delete(user.uniquename);
+            this.leaveRoom(user);
             this.sendToAll({ type: 'disconnected', uniquename: user.uniquename, name: user.name });
         }
     }
@@ -87,7 +87,7 @@ export class World implements Scriptable {
 
         this.sendToAll({ type: 'connected', uniquename: user.uniquename, name: user.name });
         this.sendToUser(socket, { type: 'system', message: config.WelcomeMessage });
-        this.sendRoomDescription(user);
+        this.enteredRoom(user);
 
         socket.on('message', (message: TimedMessage) => this.handleMessage(user, socket, message))
     }
@@ -104,7 +104,19 @@ export class World implements Scriptable {
     private sendToAll(message: Message) {
         const users = this.userSockets.keys();
         for (let name of users) {
-            this.sendToUser(name, TimeStamp(message));
+            this.sendToUser(name, message);
+        }
+    }
+
+    private sendToRoom(room: Room, message: Message): void;
+    private sendToRoom(actor: Actor, message: Message): void;
+    private sendToRoom(roomOrActor: Room | Actor, message: Message): void {
+        const room = isRoom(roomOrActor) ? roomOrActor : this.rooms.get(roomOrActor.roomid);
+        if (!room) return;
+
+        const users = L(room.actors).where(x => isUser(x)).toArray() as User[];
+        for (let user of users) {
+            this.sendToUser(user.uniquename, message);
         }
     }
 
@@ -129,10 +141,21 @@ export class World implements Scriptable {
             this.sendToAll({ type: 'talk-global', uniquename: user.uniquename, name: user.name, message: tail.trim() });
             return;
         }
+
+        if (In(command, "say")) {
+            this.say(user, tail);
+        }
+
+        // no commands picked up, default to talking. 
+        this.say(user, message.message);
+    }
+
+    private say(actor: Actor, message: string) {
+        this.sendToRoom(actor, { type: 'talk-room', name: actor.name, actorid: actor.id, message })
     }
 
     private look(user: User, message: Messages.Look) {
-        if(message.subject) {
+        if (message.subject) {
             //TODO
             return;
         }
@@ -152,7 +175,42 @@ export class World implements Scriptable {
             id: r.id,
             name: r.name,
             description: brief ? undefined : r.description,
-            exits: r.exits
+            exits: r.exits,
+            inRoom: r.id == user.roomid
         });
+    }
+
+    private leaveRoom(actor: Actor, direction?: Direction) {
+        const room = this.rooms.get(actor.roomid);
+        if (!room)
+            return;
+
+        this.sendToRoom(room, {
+            type: 'actor-moved',
+            actorid: actor.id,
+            name: actor.name,
+            entered: false,
+            direction: direction
+        });
+        room.actors.delete(actor);
+    }
+
+    private enteredRoom(actor: Actor, direction?: Direction) {
+        const room = this.rooms.get(actor.roomid);
+        if (!room)
+            return;
+
+        this.sendToRoom(room, {
+            type: 'actor-moved',
+            actorid: actor.id,
+            name: actor.name,
+            entered: true,
+            direction: direction
+        });
+        room.actors.add(actor);
+
+        if(isUser(actor)) {
+            this.sendRoomDescription(actor);
+        }
     }
 }
