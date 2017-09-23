@@ -104,6 +104,9 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
 
         case 'room-description':
             return <Room.Description {...m} />
+
+        case 'actor-moved':
+            return <Room.Movement {...m} />
     }
 
     return empty;

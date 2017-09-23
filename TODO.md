@@ -33,7 +33,7 @@
     - ~~Room communication, "say" command. ~~
         - ~~Default to "say" if no token parsed. ~~
     - Show users in room descriptions.
-    - movement
+    - ~~movement~~
     - ~~Show description upon entering room~~
     - Keypad navigation
 - Private talk

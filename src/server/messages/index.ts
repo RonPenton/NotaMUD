@@ -1,5 +1,6 @@
 import * as moment from 'moment';
-import { RoomClientData, Direction } from '../models/room';
+import { RoomClientData } from '../models/room';
+import { Direction } from '../models/direction';
 
 export type BaseMessage<T extends string> = { type: T };
 export type GenericMessage<T extends string> = BaseMessage<T> & { message: string; }

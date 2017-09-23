@@ -1,10 +1,11 @@
+import { Direction, getDirection } from './direction';
 import { TimedMessage, TimeStamp } from '../messages/index';
 import { split } from '../utils/parse';
 import { config } from '../config';
 import * as moment from 'moment';
 
 import { getCanonicalName, User, Actor, isUser } from './user';
-import { Room, isRoom, Direction } from "./room";
+import { isRoom, Room } from './room';
 import { Scriptable } from "./scriptable";
 import { Rooms, Actors } from "./db";
 import { In, L } from '../utils/linq';
@@ -130,6 +131,8 @@ export class World implements Scriptable {
                 return;
             case 'look':
                 return this.look(user, message);
+            case 'move':
+                return this.move(user, message.direction);
         }
     }
 
@@ -137,13 +140,18 @@ export class World implements Scriptable {
         const { head, tail } = split(message.message);
         const command = head.toLowerCase();
 
+        const direction = getDirection(command);
+        if(direction) {
+            return this.move(user, direction);
+        }
+
         if (In(command, "ch", "chat")) {
             this.sendToAll({ type: 'talk-global', uniquename: user.uniquename, name: user.name, message: tail.trim() });
             return;
         }
 
         if (In(command, "say")) {
-            this.say(user, tail);
+            return this.say(user, tail);
         }
 
         // no commands picked up, default to talking. 
@@ -160,6 +168,21 @@ export class World implements Scriptable {
             return;
         }
         this.sendRoomDescription(user, message.brief);
+    }
+
+    private move(user: User, direction: Direction) {
+        const oldRoom = this.rooms.get(user.roomid);
+        if (!oldRoom) return;
+        const exit = oldRoom.exits[direction];
+        if (!exit)
+            return this.sendToUser(user.uniquename, { type: 'error', message: "There is no exit in that direction!" });
+
+        const newRoom = this.rooms.get(exit.exitroom);
+        if (!newRoom) return;
+
+        this.leaveRoom(user, direction);
+        user.roomid = newRoom.id;
+        this.enteredRoom(user, direction);
     }
 
     private sendRoomDescription(user: User, brief?: boolean, room?: Room) {
@@ -209,7 +232,7 @@ export class World implements Scriptable {
         });
         room.actors.add(actor);
 
-        if(isUser(actor)) {
+        if (isUser(actor)) {
             this.sendRoomDescription(actor);
         }
     }
