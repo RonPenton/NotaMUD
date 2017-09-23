@@ -32,11 +32,10 @@
     - ~~"Brief Look" command.~~
     - ~~Room communication, "say" command. ~~
         - ~~Default to "say" if no token parsed. ~~
-    - Show users in room descriptions.
+    - ~~Show users in room descriptions.~~
     - ~~movement~~
     - ~~Show description upon entering room~~
-    - Keypad navigation
-- Private talk
+- ~~Private messaging~~
 - ~~Reorganize Message Components~~
 - Public Server
     - Beanstalk?
@@ -44,6 +43,14 @@
 
 # Milestone 0.2 - UI update
 
+- Rename ConcerningUser to UserReference
+    - rename properties, 
+    - Move to user file
+    - Create utility method to convert user to user reference
+    - extend from actorReference?
+- Refactor and introduce a more declarative "command" system.
+    - Current design is messy, won't scale.
+- Look at refactoring "World" class to be cleaner. 
 - Wireframe layout of the UI, figure out where to put components.
     - Input/Output area.
     - Contextual action bar 
@@ -213,10 +220,12 @@
 - Karma/Law system
 - Magic
 - Banks
+- Shops
 - Map Editor
 - Story
 - Turkish Drunk Mode
 - Console Themes
+- Auction Halls/User-run Shops
 
 ## Floating (ie: Do them when they become an issue)
 
@@ -237,6 +246,10 @@
 - Hunger system?
 - Sleep/Rest system?
 - Stealth?
+- Keypad navigation
+    - Good idea in theory, bad execution options. Keyup is fired after change on some browsers so we wouldn't be able to cancel the entry of the number into the textbox. Gets messier from there.
+- in-game Mail?
+
 
 ## Not in scope
 

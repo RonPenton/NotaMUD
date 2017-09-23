@@ -22,12 +22,13 @@ export class Description extends OneTimeRender<TimeStamped<RoomDescription>> {
     }
 
     actors() {
-        if (this.props.actors.length == 0)
+        const displayActors = L(this.props.actors).where(x => x.actorid != User.id);
+        if (!displayActors.areAny())
             return null;
         return (
             <div className="actors">
                 <span className="actors-text">Here: </span>
-                {L(this.props.actors).where(x => x.actorid != User.id).select(x => this.actor(x)).join(() => ", ")}
+                {displayActors.select(x => this.actor(x)).join(() => ", ")}
             </div>
         );
     }

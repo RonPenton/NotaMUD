@@ -1,3 +1,4 @@
+import { L } from '../utils/linq';
 import * as moment from 'moment';
 
 export interface Actor {
@@ -13,7 +14,7 @@ export type ActorReference = {
 
 export const getActorReference = (actor: Actor): ActorReference => {
     return {
-        actorname: actor.name, 
+        actorname: actor.name,
         actorid: actor.id
     }
 }
@@ -39,6 +40,13 @@ export const isInvalidName = (name: string): boolean => {
 
 export const getCanonicalName = (name: string): string => {
     return name.toLowerCase();
+}
+
+export const findUserMatch = (partialName: string, users: User[]) => {
+    const partial = getCanonicalName(partialName);
+    const u = L(users);
+    return u.firstOrDefault(x => x.uniquename == partial)           // match exact names first.
+        || u.firstOrDefault(x => x.uniquename.startsWith(partial)); // then partials if none found.
 }
 
 export default User;

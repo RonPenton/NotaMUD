@@ -32,7 +32,6 @@ export type TalkPrivate = GenericMessage<'talk-private'> & ConcerningUser;
 export type Ping = BaseMessage<'ping'>;
 export type Pong = BaseMessage<'pong'> & { originalStamp: string };
 
-
 export type Look = BaseMessage<'look'> & { brief?: boolean, subject?: string };
 export type RoomDescription = BaseMessage<'room-description'> & RoomClientData & { inRoom: boolean };
 export type Move = BaseMessage<'move'> & { direction: Direction };

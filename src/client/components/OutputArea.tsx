@@ -101,6 +101,8 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
             return <Talk.Global {...m} />
         case 'talk-room':
             return <Talk.Room {...m} />
+        case 'talk-private':
+            return <Talk.Private {...m} />
 
         case 'room-description':
             return <Room.Description {...m} />

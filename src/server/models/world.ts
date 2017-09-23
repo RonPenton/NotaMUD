@@ -4,7 +4,7 @@ import { split } from '../utils/parse';
 import { config } from '../config';
 import * as moment from 'moment';
 
-import { Actor, getActorReference, getCanonicalName, isUser, User } from './user';
+import { Actor, findUserMatch, getActorReference, getCanonicalName, isUser, User } from './user';
 import { isRoom, Room } from './room';
 import { Scriptable } from "./scriptable";
 import { Rooms, Actors } from "./db";
@@ -141,7 +141,7 @@ export class World implements Scriptable {
         const command = head.toLowerCase();
 
         const direction = getDirection(command);
-        if(direction) {
+        if (direction) {
             return this.move(user, direction);
         }
 
@@ -154,12 +154,27 @@ export class World implements Scriptable {
             return this.say(user, tail);
         }
 
+        if (In(command, "whisper")) {
+            const { head: name, tail: message } = split(tail);
+            return this.whisper(user, name, message);
+        }
+
         // no commands picked up, default to talking. 
         this.say(user, message.message);
     }
 
     private say(actor: Actor, message: string) {
         this.sendToRoom(actor, { type: 'talk-room', actorname: actor.name, actorid: actor.id, message })
+    }
+
+    private whisper(user: User, targetName: string, message: string) {
+        const target = findUserMatch(targetName, L(this.activeUsers.values()).toArray());
+        if (!target)
+            return this.sendToUser(user.uniquename, { type: 'error', message: 'There is no user with that name!' });
+        if (target.id == user.id)
+            return this.sendToUser(user.uniquename, { type: 'system', message: 'You mutter to yourself...' });
+        this.sendToUser(user.uniquename, { type: 'system', message: `You whisper to ${target.name}...` });
+        this.sendToUser(target.uniquename, { type: 'talk-private', uniquename: user.uniquename, name: user.name, message: message });
     }
 
     private look(user: User, message: Messages.Look) {
