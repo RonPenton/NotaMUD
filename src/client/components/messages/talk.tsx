@@ -19,7 +19,7 @@ export const Global: React.SFC<TimeStamped<TalkGlobal>> = props => {
 export const Room: React.SFC<TimeStamped<TalkRoom>> = props => {
     const message = props.actorid == User.id 
             ? `You say "${props.message}"`
-            : `${props.name} says "${props.message}"`;
+            : `${props.actorname} says "${props.message}"`;
     return (
         <div className="chat-global">
             <TimeStamp time={props.timeStampStr} />

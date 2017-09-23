@@ -409,9 +409,20 @@ export class LinqContainer<T> implements Iterable<T> {
         return array;
     }
 
-    public toMap<K>(keyPicker: (item: T) => K): Map<K,T> {
+    public toMap<K>(keyPicker: (item: T) => K): Map<K, T> {
         const pairs = this.select(x => tuple(keyPicker(x), x));
-        return new Map<K,T>(pairs.toArray());
+        return new Map<K, T>(pairs.toArray());
+    }
+
+    public join<U>(generator: Func1<number, U>): LinqContainer<T | U> {
+        const output: (T|U)[] = [];
+        const count = this.count();
+        this.forEach((x, i) => {
+            output.push(x);
+            if(i != count - 1)
+            output.push(generator(i));
+        });
+        return L(output);
     }
 
     static _pickerCompare<T>(picker: Func1<T, any>, compare: Func2<any, any, number>): Func2<T, T, number> {

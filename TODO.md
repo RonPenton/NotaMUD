@@ -37,7 +37,7 @@
     - ~~Show description upon entering room~~
     - Keypad navigation
 - Private talk
-- Reorganize Message Components
+- ~~Reorganize Message Components~~
 - Public Server
     - Beanstalk?
     - Automated or One Command deploy.

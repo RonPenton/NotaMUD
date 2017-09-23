@@ -1,3 +1,5 @@
+import { L } from '../../../server/utils/linq';
+import { ActorReference } from '../../../server/models/user';
 import React from "react";
 
 import OneTimeRender from "../OneTimeRender";
@@ -13,9 +15,25 @@ export class Description extends OneTimeRender<TimeStamped<RoomDescription>> {
                 <div>&nbsp;</div>
                 <div className="name">{this.props.name}</div>
                 {this.description()}
+                {this.actors()}
                 {this.exits()}
             </div>
         );
+    }
+
+    actors() {
+        if (this.props.actors.length == 0)
+            return null;
+        return (
+            <div className="actors">
+                <span className="actors-text">Here: </span>
+                {L(this.props.actors).where(x => x.actorid != User.id).select(x => this.actor(x)).join(() => ", ")}
+            </div>
+        );
+    }
+
+    actor(actor: ActorReference) {
+        return <span className="actor">{actor.actorname}</span>;
     }
 
     description() {
@@ -46,7 +64,7 @@ export class Movement extends OneTimeRender<TimeStamped<ActorMoved>> {
 
         return (
             <div className="actor-moved">
-                <span className="name">{this.props.name}</span>
+                <span className="name">{this.props.actorname}</span>
                 {phrase}
             </div>
         );

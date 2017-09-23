@@ -1,6 +1,6 @@
 import { Direction } from './direction';
 import { Scriptable } from "./scriptable";
-import { Actor } from "./user";
+import { Actor, ActorReference } from './user';
 
 export interface Exit {
     exitroom: number;
@@ -20,7 +20,7 @@ export const isRoom = (item: Room | Actor): item is Room => {
 }
 
 export type RoomClientData = RoomBaseData & {
-
+    actors: ActorReference[]
 }
 
 export type DBRoom = RoomBaseData & {

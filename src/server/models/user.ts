@@ -6,6 +6,18 @@ export interface Actor {
     roomid: number;
 }
 
+export type ActorReference = {
+    actorname: string;
+    actorid: number;
+}
+
+export const getActorReference = (actor: Actor): ActorReference => {
+    return {
+        actorname: actor.name, 
+        actorid: actor.id
+    }
+}
+
 export type User = {
     uniquename: string;
     passwordHash: string;

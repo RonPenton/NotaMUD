@@ -4,7 +4,7 @@ import { split } from '../utils/parse';
 import { config } from '../config';
 import * as moment from 'moment';
 
-import { getCanonicalName, User, Actor, isUser } from './user';
+import { Actor, getActorReference, getCanonicalName, isUser, User } from './user';
 import { isRoom, Room } from './room';
 import { Scriptable } from "./scriptable";
 import { Rooms, Actors } from "./db";
@@ -159,7 +159,7 @@ export class World implements Scriptable {
     }
 
     private say(actor: Actor, message: string) {
-        this.sendToRoom(actor, { type: 'talk-room', name: actor.name, actorid: actor.id, message })
+        this.sendToRoom(actor, { type: 'talk-room', actorname: actor.name, actorid: actor.id, message })
     }
 
     private look(user: User, message: Messages.Look) {
@@ -199,6 +199,7 @@ export class World implements Scriptable {
             name: r.name,
             description: brief ? undefined : r.description,
             exits: r.exits,
+            actors: L(r.actors.values()).select(x => getActorReference(x)).toArray(),
             inRoom: r.id == user.roomid
         });
     }
@@ -211,7 +212,7 @@ export class World implements Scriptable {
         this.sendToRoom(room, {
             type: 'actor-moved',
             actorid: actor.id,
-            name: actor.name,
+            actorname: actor.name,
             entered: false,
             direction: direction
         });
@@ -226,7 +227,7 @@ export class World implements Scriptable {
         this.sendToRoom(room, {
             type: 'actor-moved',
             actorid: actor.id,
-            name: actor.name,
+            actorname: actor.name,
             entered: true,
             direction: direction
         });
