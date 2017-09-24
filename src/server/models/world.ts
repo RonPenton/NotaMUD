@@ -144,7 +144,7 @@ export class World implements Scriptable {
             if (handled) return;
         }
 
-        if (message.type == 'client-command') {
+        if (message.type == 'text-command') {
             const { head, tail } = split(message.message);
             for (let command of this.commands) {
                 const handled = await command.execute(head, tail, user, this);

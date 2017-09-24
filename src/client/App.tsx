@@ -71,7 +71,7 @@ export class App extends React.Component<{}, ClientState> {
     }
 
     private getUserInputMessage(text: string) {
-        return this.bundleMessage({ type: 'user-input', timeStampStr: moment().toISOString(), message: text });
+        return this.bundleMessage({ type: 'text-command', timeStampStr: moment().toISOString(), message: text });
     }
 
     private bundleMessage(message: TimedMessage) {
@@ -184,7 +184,7 @@ export class App extends React.Component<{}, ClientState> {
             return;
         }
 
-        this.sendMessage({ type: 'client-command', message: text });
+        this.sendMessage({ type: 'text-command', message: text });
     }
 
     private sendMessage(message: Message) {

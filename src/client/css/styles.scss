@@ -106,8 +106,9 @@ hr.divider {
     color: #DDD;
     text-align: center;
     max-width: initial;
-    margin: 0.6rem;
-
+    margin-top: 0.6rem;
+    margin-bottom: 0.6rem;
+    
     &:after {
         content: "§";
         display: inline-block;

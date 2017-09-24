@@ -80,7 +80,7 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
         case 'error':
             return <Simple.Error>{m.message}</Simple.Error>;
 
-        case 'user-input':
+        case 'text-command':
             return <Simple.UserInput text={m.message} />
 
         case 'pong':
