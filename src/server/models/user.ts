@@ -36,7 +36,7 @@ export const getUserReference = (user: User): UserReference => {
     return { ...getActorReference(user), uniquename: user.uniquename };
 }
 
-export const isUser = (actor: Actor): actor is User => {
+export const isUser = (actor: Actor | SocketIO.Socket): actor is User => {
     if ((<User>actor).uniquename)
         return true;
     return false;

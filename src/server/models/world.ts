@@ -1,17 +1,21 @@
-import { Direction, getDirection } from './direction';
+import { getArray } from '../utils/index';
+import { Direction } from './direction';
 import { TimedMessage, TimeStamp } from '../messages/index';
 import { split } from '../utils/parse';
 import { config } from '../config';
 import * as moment from 'moment';
+import * as fs from 'fs';
+import * as path from 'path';
 
 import { Actor, findUserMatch, getActorReference, getCanonicalName, getUserReference, isUser, User } from './user';
 import { isRoom, Room } from './room';
 import { Scriptable } from "./scriptable";
 import { Rooms, Actors } from "./db";
-import { In, L } from '../utils/linq';
+import { L } from '../utils/linq';
 import * as Messages from '../messages';
 import Message from '../messages';
 import { isString } from 'util';
+import { Command } from '../commands/index';
 
 
 export class World implements Scriptable {
@@ -22,17 +26,21 @@ export class World implements Scriptable {
             .toMap(x => x.id);
         const actors = L(await Actors.getAll()).toMap(x => x.id);
 
-        return new World(rooms, actors);
+        const commands = await World.loadCommands();
+
+        return new World(rooms, actors, commands);
     }
 
     private constructor(
         private readonly rooms: Map<number, Room>,
-        public readonly actors: Map<number, Actor>) {
+        public readonly actors: Map<number, Actor>,
+        private readonly commands: Command[]) {
 
         const users = L(actors.values()).where(x => isUser(x)).toArray() as User[];
         this.users = L(users).toMap(u => u.uniquename);
     }
 
+    //private commands: Command[] = [];
     private readonly users = new Map<string, User>();
     private nextActorId: number = 0;
     public getNextActorId(): number { return this.nextActorId++; }
@@ -90,19 +98,24 @@ export class World implements Scriptable {
         this.sendToUser(socket, { type: 'system', message: config.WelcomeMessage });
         this.enteredRoom(user);
 
-        socket.on('message', (message: TimedMessage) => this.handleMessage(user, socket, message))
+        socket.on('message', (message: TimedMessage) => this.handleMessage(user, message))
     }
 
-    private sendToUser(user: string, message: Message): void;
-    private sendToUser(socket: SocketIO.Socket, message: Message): void;
-    private sendToUser(socketOrUser: SocketIO.Socket | string, message: Message) {
-        const socket = isString(socketOrUser) ? this.userSockets.get(socketOrUser) : socketOrUser;
+    public sendToUser(username: string, message: Message): void;
+    public sendToUser(socket: SocketIO.Socket, message: Message): void;
+    public sendToUser(user: User, message: Message): void;
+    public sendToUser(socketOrUser: SocketIO.Socket | string | User, message: Message) {
+        const socket = isString(socketOrUser)
+            ? this.userSockets.get(socketOrUser)
+            : isUser(socketOrUser) ?
+                this.userSockets.get(socketOrUser.uniquename)
+                : socketOrUser;
         if (socket) {
             socket.emit('message', TimeStamp(message));
         }
     }
 
-    private sendToAll(message: Message) {
+    public sendToAll(message: Message) {
         const users = this.userSockets.keys();
         for (let name of users) {
             this.sendToUser(name, message);
@@ -117,67 +130,44 @@ export class World implements Scriptable {
 
         const users = L(room.actors).where(x => isUser(x)).toArray() as User[];
         for (let user of users) {
-            this.sendToUser(user.uniquename, message);
+            this.sendToUser(user, message);
         }
     }
 
-    private handleMessage(user: User, socket: SocketIO.Socket, message: TimedMessage) {
-        switch (message.type) {
-            case 'client-command':
-                this.parseMessage(user, socket, message);
-                return;
-            case 'ping':
-                this.sendToUser(socket, { type: 'pong', originalStamp: message.timeStampStr });
-                return;
-            case 'look':
-                return this.look(user, message);
-            case 'move':
-                return this.move(user, message.direction);
+    private async handleMessage(user: User, message: TimedMessage) {
+
+        for (let command of this.commands) {
+            const handled = await command.executeMessage(message, user, this);
+            if (handled) return;
+        }
+
+        if (message.type == 'client-command') {
+            const { head, tail } = split(message.message);
+            for (let command of this.commands) {
+                const handled = await command.execute(head, tail, user, this);
+                if (handled) return;
+            }
+
+            // no commands picked up, default to talking. 
+            this.say(user, message.message);
         }
     }
 
-    private parseMessage(user: User, _: SocketIO.Socket, message: Messages.ClientTextCommand) {
-        const { head, tail } = split(message.message);
-        const command = head.toLowerCase();
-
-        const direction = getDirection(command);
-        if (direction) {
-            return this.move(user, direction);
-        }
-
-        if (In(command, "ch", "chat")) {
-            this.sendToAll({ type: 'talk-global', from: getUserReference(user), message: tail.trim() });
-            return;
-        }
-
-        if (In(command, "say")) {
-            return this.say(user, tail);
-        }
-
-        if (In(command, "whisper")) {
-            const { head: name, tail: message } = split(tail);
-            return this.whisper(user, name, message);
-        }
-
-        // no commands picked up, default to talking. 
-        this.say(user, message.message);
-    }
-
-    private say(actor: Actor, message: string) {
+    public say(actor: Actor, message: string) {
         this.sendToRoom(actor, { type: 'talk-room', from: getActorReference(actor), message })
     }
 
-    private whisper(user: User, targetName: string, message: string) {
+    public whisper(user: User, targetName: string, message: string) {
         const target = findUserMatch(targetName, L(this.activeUsers.values()).toArray());
         if (!target)
-            return this.sendToUser(user.uniquename, { type: 'error', message: 'There is no user with that name!' });
+            return this.sendToUser(user, { type: 'error', message: 'There is no user with that name!' });
         if (target.id == user.id)
-            return this.sendToUser(user.uniquename, { type: 'system', message: 'You mutter to yourself...' });
-        this.sendToUser(user.uniquename, { type: 'system', message: `You whisper to ${target.name}...` });
-        this.sendToUser(target.uniquename, { type: 'talk-private', from: getUserReference(user), message: message });
+            return this.sendToUser(user, { type: 'system', message: 'You mutter to yourself...' });
+        this.sendToUser(user, { type: 'system', message: `You whisper to ${target.name}...` });
+        this.sendToUser(target, { type: 'talk-private', from: getUserReference(user), message: message });
     }
 
-    private look(user: User, message: Messages.Look) {
+    public look(user: User, message: Messages.Look) {
         if (message.subject) {
             //TODO
             return;
@@ -185,12 +175,12 @@ export class World implements Scriptable {
         this.sendRoomDescription(user, message.brief);
     }
 
-    private move(user: User, direction: Direction) {
+    public move(user: User, direction: Direction) {
         const oldRoom = this.rooms.get(user.roomid);
         if (!oldRoom) return;
         const exit = oldRoom.exits[direction];
         if (!exit)
-            return this.sendToUser(user.uniquename, { type: 'error', message: "There is no exit in that direction!" });
+            return this.sendToUser(user, { type: 'error', message: "There is no exit in that direction!" });
 
         const newRoom = this.rooms.get(exit.exitroom);
         if (!newRoom) return;
@@ -208,7 +198,7 @@ export class World implements Scriptable {
             return; // who knows.
         }
 
-        this.sendToUser(user.uniquename, {
+        this.sendToUser(user, {
             type: 'room-description',
             id: r.id,
             name: r.name,
@@ -239,5 +229,23 @@ export class World implements Scriptable {
         if (isUser(actor)) {
             this.sendRoomDescription(actor);
         }
+    }
+
+    private static loadCommands(): Promise<Command[]> {
+        const p = path.resolve(__dirname, '..', 'commands');
+        return new Promise<Command[]>((resolve, reject) => {
+            fs.readdir(p, (error, files) => {
+                if (error) return reject(error);
+                const commands: Command[] = [];
+                for (let f of L(files).where(x => x.endsWith(".js"))) {
+                    const imports = require("../commands/" + f).commands;
+                    if (!imports) continue;
+                    for (let c of getArray(imports)) {
+                        commands.push(c);
+                    }
+                }
+                resolve(commands);
+            });
+        });
     }
 }

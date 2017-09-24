@@ -6,6 +6,7 @@ import { ActorReference, UserReference } from '../models/user';
 
 export type BaseMessage<T extends string> = { type: T };
 export type GenericMessage<T extends string> = BaseMessage<T> & { message: string; }
+export type NullMessage = BaseMessage<'null'>;
 
 type _TimeStamped = { timeStampStr: string };
 export type TimeStamped<T> = T & _TimeStamped;
@@ -38,8 +39,8 @@ export type Move = BaseMessage<'move'> & { direction: Direction };
 export type ActorMoved = BaseMessage<'actor-moved'> & FromActor & { entered: boolean, direction?: Direction };
 
 export type Message =
-    Error |
-    System |
+    NullMessage |
+    Error | System |
     ClientTextCommand |
     UserInput |
     Connected |

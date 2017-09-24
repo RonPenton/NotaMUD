@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "name": "Ashborne Town Hall",
+        "name": "Ashborne Town Square",
         "description": "This is the main meetingplace of Ashborne. Wide avenues flow off in all four cardinal directions, and many people are milling about the large fountain.",
         "exits": {
             "n": { "exitroom": 2 }

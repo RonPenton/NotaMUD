@@ -46,8 +46,7 @@
     - ~~Move to user file~~
     - ~~Create utility method to convert user to user reference~~
     - ~~extend from actorReference?~~
-- Refactor and introduce a more declarative "command" system.
-    - Current design is messy, won't scale.
+- ~~Refactor and introduce a more declarative "command" system.~~
 - "Who" list
 - Command list/help.
 - Look at refactoring "World" class to be cleaner. 

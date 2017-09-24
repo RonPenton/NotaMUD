@@ -18,3 +18,10 @@ export interface Action4<P1, P2, P3, P4> { (parameter1: P1, parameter2: P2, para
 export function tuple<T, U>(t: T, u: U): [T, U] {
     return [t, u];
 }
+
+export type ItemOrArray<T> = T | T[]
+
+export function getArray<T>(item: ItemOrArray<T>) : T[] {
+    if(Array.isArray(item)) return item;
+    return [item];
+}
