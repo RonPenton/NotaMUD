@@ -8,9 +8,8 @@ export type BaseMessage<T extends string> = { type: T };
 export type GenericMessage<T extends string> = BaseMessage<T> & { message: string; }
 export type NullMessage = BaseMessage<'null'>;
 
-type _TimeStamped = { timeStampStr: string };
-export type TimeStamped<T> = T & _TimeStamped;
-export type TimedMessage = Message & _TimeStamped;
+export type TimeStamped<T> = T & { timeStampStr: string };
+export type TimedMessage = TimeStamped<Message>;
 export function TimeStamp(message: Message): TimedMessage {
     return { ...message, timeStampStr: moment().toISOString() }
 }

@@ -49,8 +49,8 @@
 - ~~Refactor and introduce a more declarative "command" system.~~
 - ~~"Who" list~~
 - ~~Add "forever" launcher.~~
-- Remove user input message type
-- Clean up Timestamp types.
+- ~~Remove user input message type~~
+- ~~Clean up Timestamp types.~~
 - Command list/help.
 - Look at refactoring "World" class to be cleaner. 
 - Wireframe layout of the UI, figure out where to put components.
