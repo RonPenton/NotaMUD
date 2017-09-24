@@ -17,7 +17,8 @@
         "copy-ejs": "copyfiles -u 3 ./src/client/views/**/*.ejs ./build/views",
         "copy-svg": "copyfiles -u 2 ./src/client/**/*.svg ./build/public",
         "copy-fast": "npm run-script copy-css && npm run-script copy-ejs",
-        "build-fast": "npm run-script build-client && npm run-script copy-fast"
+        "build-fast": "npm run-script build-client && npm run-script copy-fast",
+        "aws-start": "forever start ./build/index.js"
     },
     "repository": {
         "type": "git",

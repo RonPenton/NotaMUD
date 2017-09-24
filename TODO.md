@@ -47,7 +47,8 @@
     - ~~Create utility method to convert user to user reference~~
     - ~~extend from actorReference?~~
 - ~~Refactor and introduce a more declarative "command" system.~~
-- "Who" list
+- ~~"Who" list~~
+- ~~Add "forever" launcher.~~
 - Remove user input message type
 - Clean up Timestamp types.
 - Command list/help.
