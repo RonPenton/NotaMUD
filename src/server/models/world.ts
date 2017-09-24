@@ -4,7 +4,7 @@ import { split } from '../utils/parse';
 import { config } from '../config';
 import * as moment from 'moment';
 
-import { Actor, findUserMatch, getActorReference, getCanonicalName, isUser, User } from './user';
+import { Actor, findUserMatch, getActorReference, getCanonicalName, getUserReference, isUser, User } from './user';
 import { isRoom, Room } from './room';
 import { Scriptable } from "./scriptable";
 import { Rooms, Actors } from "./db";
@@ -59,7 +59,7 @@ export class World implements Scriptable {
             this.activeUsers.delete(user.uniquename);
             this.userSockets.delete(user.uniquename);
             this.leaveRoom(user);
-            this.sendToAll({ type: 'disconnected', uniquename: user.uniquename, name: user.name });
+            this.sendToAll({ type: 'disconnected', from: getUserReference(user) });
         }
     }
 
@@ -86,7 +86,7 @@ export class World implements Scriptable {
         this.activeUsers.set(user.uniquename, user);
         this.userSockets.set(user.uniquename, socket);
 
-        this.sendToAll({ type: 'connected', uniquename: user.uniquename, name: user.name });
+        this.sendToAll({ type: 'connected', from: getUserReference(user) });
         this.sendToUser(socket, { type: 'system', message: config.WelcomeMessage });
         this.enteredRoom(user);
 
@@ -146,7 +146,7 @@ export class World implements Scriptable {
         }
 
         if (In(command, "ch", "chat")) {
-            this.sendToAll({ type: 'talk-global', uniquename: user.uniquename, name: user.name, message: tail.trim() });
+            this.sendToAll({ type: 'talk-global', from: getUserReference(user), message: tail.trim() });
             return;
         }
 
@@ -164,7 +164,7 @@ export class World implements Scriptable {
     }
 
     private say(actor: Actor, message: string) {
-        this.sendToRoom(actor, { type: 'talk-room', actorname: actor.name, actorid: actor.id, message })
+        this.sendToRoom(actor, { type: 'talk-room', from: getActorReference(actor), message })
     }
 
     private whisper(user: User, targetName: string, message: string) {
@@ -174,7 +174,7 @@ export class World implements Scriptable {
         if (target.id == user.id)
             return this.sendToUser(user.uniquename, { type: 'system', message: 'You mutter to yourself...' });
         this.sendToUser(user.uniquename, { type: 'system', message: `You whisper to ${target.name}...` });
-        this.sendToUser(target.uniquename, { type: 'talk-private', uniquename: user.uniquename, name: user.name, message: message });
+        this.sendToUser(target.uniquename, { type: 'talk-private', from: getUserReference(user), message: message });
     }
 
     private look(user: User, message: Messages.Look) {
@@ -224,13 +224,7 @@ export class World implements Scriptable {
         if (!room)
             return;
 
-        this.sendToRoom(room, {
-            type: 'actor-moved',
-            actorid: actor.id,
-            actorname: actor.name,
-            entered: false,
-            direction: direction
-        });
+        this.sendToRoom(room, { type: 'actor-moved', from: getActorReference(actor), entered: false, direction: direction });
         room.actors.delete(actor);
     }
 
@@ -239,13 +233,7 @@ export class World implements Scriptable {
         if (!room)
             return;
 
-        this.sendToRoom(room, {
-            type: 'actor-moved',
-            actorid: actor.id,
-            actorname: actor.name,
-            entered: true,
-            direction: direction
-        });
+        this.sendToRoom(room, { type: 'actor-moved', from: getActorReference(actor), entered: true, direction: direction });
         room.actors.add(actor);
 
         if (isUser(actor)) {

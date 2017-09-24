@@ -41,13 +41,15 @@
 
 # Milestone 0.2 - UI update
 
-- Rename ConcerningUser to UserReference
-    - rename properties, 
-    - Move to user file
-    - Create utility method to convert user to user reference
-    - extend from actorReference?
+- ~~Rename ConcerningUser to UserReference~~
+    - ~~rename properties~~ 
+    - ~~Move to user file~~
+    - ~~Create utility method to convert user to user reference~~
+    - ~~extend from actorReference?~~
 - Refactor and introduce a more declarative "command" system.
     - Current design is messy, won't scale.
+- "Who" list
+- Command list/help.
 - Look at refactoring "World" class to be cleaner. 
 - Wireframe layout of the UI, figure out where to put components.
     - Input/Output area.

@@ -6,7 +6,7 @@ import { TimeStamp } from "./simple";
 
 
 export const Global: React.SFC<TimeStamped<TalkGlobal>> = props => {
-    const name = props.uniquename == User.uniquename ? "You chat: " : `${props.name} chats: `;
+    const name = props.from.uniquename == User.uniquename ? "You chat: " : `${props.from.name} chats: `;
     return (
         <div className="chat-global">
             <TimeStamp time={props.timeStampStr} />
@@ -17,9 +17,9 @@ export const Global: React.SFC<TimeStamped<TalkGlobal>> = props => {
 }
 
 export const Room: React.SFC<TimeStamped<TalkRoom>> = props => {
-    const message = props.actorid == User.id 
+    const message = props.from.id == User.id 
             ? `You say "${props.message}"`
-            : `${props.actorname} says "${props.message}"`;
+            : `${props.from.name} says "${props.message}"`;
     return (
         <div className="chat-global">
             <TimeStamp time={props.timeStampStr} />
@@ -32,7 +32,7 @@ export const Private: React.SFC<TimeStamped<TalkPrivate>> = props => {
     return (
         <div className="chat-private">
             <TimeStamp time={props.timeStampStr} />
-            {`${props.name} whispers to you, "${props.message}"`}
+            {`${props.from.name} whispers to you, "${props.message}"`}
         </div>
     );
 }

@@ -8,14 +8,14 @@ export interface Actor {
 }
 
 export type ActorReference = {
-    actorname: string;
-    actorid: number;
+    name: string;
+    id: number;
 }
 
 export const getActorReference = (actor: Actor): ActorReference => {
     return {
-        actorname: actor.name,
-        actorid: actor.id
+        name: actor.name,
+        id: actor.id
     }
 }
 
@@ -27,6 +27,14 @@ export type User = {
     suspendedUntil?: moment.Moment;
     suspensionReason?: string;
 } & Actor;
+
+export type UserReference = ActorReference & {
+    uniquename: string;
+}
+
+export const getUserReference = (user: User): UserReference => {
+    return { ...getActorReference(user), uniquename: user.uniquename };
+}
 
 export const isUser = (actor: Actor): actor is User => {
     if ((<User>actor).uniquename)

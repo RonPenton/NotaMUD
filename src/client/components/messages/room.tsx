@@ -22,7 +22,7 @@ export class Description extends OneTimeRender<TimeStamped<RoomDescription>> {
     }
 
     actors() {
-        const displayActors = L(this.props.actors).where(x => x.actorid != User.id);
+        const displayActors = L(this.props.actors).where(x => x.id != User.id);
         if (!displayActors.areAny())
             return null;
         return (
@@ -34,7 +34,7 @@ export class Description extends OneTimeRender<TimeStamped<RoomDescription>> {
     }
 
     actor(actor: ActorReference) {
-        return <span className="actor">{actor.actorname}</span>;
+        return <span className="actor">{actor.name}</span>;
     }
 
     description() {
@@ -52,7 +52,7 @@ export class Description extends OneTimeRender<TimeStamped<RoomDescription>> {
 
 export class Movement extends OneTimeRender<TimeStamped<ActorMoved>> {
     render() {
-        if (this.props.actorid == User.id)
+        if (this.props.from.id == User.id)
             return null;
 
         const phrase = this.props.direction
@@ -65,7 +65,7 @@ export class Movement extends OneTimeRender<TimeStamped<ActorMoved>> {
 
         return (
             <div className="actor-moved">
-                <span className="name">{this.props.actorname}</span>
+                <span className="name">{this.props.from.name}</span>
                 {phrase}
             </div>
         );
