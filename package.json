@@ -1,6 +1,6 @@
 {
     "name": "notamud",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "A MUD for Node and Websockets",
     "main": "./server/index.js",
     "scripts": {
@@ -32,7 +32,7 @@
         "url": "https://github.com/RonPenton/NotaMUD/issues"
     },
     "homepage": "https://github.com/RonPenton/NotaMUD#readme",
-    "devDependencies": {
+    "dependencies": {
         "@types/bcrypt-nodejs": "0.0.30",
         "@types/body-parser": "^1.16.4",
         "@types/connect-flash": "0.0.33",

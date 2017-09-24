@@ -37,9 +37,7 @@
     - ~~Show description upon entering room~~
 - ~~Private messaging~~
 - ~~Reorganize Message Components~~
-- Public Server
-    - Beanstalk?
-    - Automated or One Command deploy.
+- ~~Public Server~~
 
 # Milestone 0.2 - UI update
 
