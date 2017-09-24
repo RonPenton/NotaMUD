@@ -1,6 +1,6 @@
 import { getArray } from '../utils/index';
 import { Direction } from './direction';
-import { TimedMessage, TimeStamp } from '../messages/index';
+import { TimedMessage, TimeStamp } from '../messages';
 import { split } from '../utils/parse';
 import { config } from '../config';
 import * as moment from 'moment';
@@ -40,13 +40,16 @@ export class World implements Scriptable {
         this.users = L(users).toMap(u => u.uniquename);
     }
 
-    //private commands: Command[] = [];
     private readonly users = new Map<string, User>();
     private nextActorId: number = 0;
     public getNextActorId(): number { return this.nextActorId++; }
 
     private activeUsers = new Map<string, User>();
     private userSockets = new Map<string, SocketIO.Socket>();
+
+    public getActiveUsers(): Iterable<User> {
+        return this.activeUsers.values();
+    }
 
     public getUser(name: string): User | undefined {
         return this.users.get(getCanonicalName(name));

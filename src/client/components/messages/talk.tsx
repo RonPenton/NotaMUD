@@ -1,7 +1,7 @@
 import React from "react";
 
 import { User } from "../../App";
-import { TalkGlobal, TalkPrivate, TalkRoom, TimeStamped } from '../../../server/messages/index';
+import { TalkGlobal, TalkPrivate, TalkRoom, TimeStamped } from '../../../server/messages';
 import { TimeStamp } from "./simple";
 
 

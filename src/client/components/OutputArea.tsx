@@ -6,6 +6,7 @@ import * as Talk from './messages/talk';
 import * as Debug from './messages/debug';
 import * as Room from './messages/room';
 import * as Simple from './messages/simple';
+import * as Information from './messages/information';
 
 export interface OutputAreaProps {
     messages: OutputMessage[];
@@ -109,6 +110,9 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
 
         case 'actor-moved':
             return <Room.Movement {...m} />
+
+        case 'active-users':
+            return <Information.ActiveUsers {...m} />
     }
 
     return empty;

@@ -1,5 +1,5 @@
-import { Look, TimeStamped } from '../messages/index';
-import { constructCommand, truePromise } from './index';
+import { Look, TimeStamped } from '../messages';
+import { constructCommand } from './index';
 
 module.exports.commands = constructCommand<TimeStamped<Look>>(
     "look",
@@ -8,6 +8,5 @@ module.exports.commands = constructCommand<TimeStamped<Look>>(
     "look",
     (message, user, world) => {
         world.look(user, message);
-        return truePromise;
     }
 );

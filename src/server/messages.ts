@@ -1,8 +1,8 @@
 import * as moment from 'moment';
 
-import { RoomClientData } from '../models/room';
-import { Direction } from '../models/direction';
-import { ActorReference, UserReference } from '../models/user';
+import { RoomClientData } from './models/room';
+import { Direction } from './models/direction';
+import { ActorReference, UserReference } from './models/user';
 
 export type BaseMessage<T extends string> = { type: T };
 export type GenericMessage<T extends string> = BaseMessage<T> & { message: string; }
@@ -38,6 +38,8 @@ export type RoomDescription = BaseMessage<'room-description'> & RoomClientData &
 export type Move = BaseMessage<'move'> & { direction: Direction };
 export type ActorMoved = BaseMessage<'actor-moved'> & FromActor & { entered: boolean, direction?: Direction };
 
+export type ActiveUsers = BaseMessage<'active-users'> & { list: UserReference[] };
+
 export type Message =
     NullMessage |
     Error | System |
@@ -48,6 +50,14 @@ export type Message =
     TalkGlobal | TalkRoom | TalkPrivate |
     Ping | Pong |
     Look | RoomDescription |
-    Move | ActorMoved;
+    Move | ActorMoved |
+    ActiveUsers;
 
+
+    
 export default Message;
+
+
+
+
+

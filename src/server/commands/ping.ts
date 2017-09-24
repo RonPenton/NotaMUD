@@ -1,5 +1,5 @@
-import { Ping, TimeStamped } from '../messages/index';
-import { constructCommand, truePromise } from './index';
+import { Ping, TimeStamped } from '../messages';
+import { constructCommand } from './index';
 
 module.exports.commands = constructCommand<TimeStamped<Ping>>(
     "ping",
@@ -8,6 +8,5 @@ module.exports.commands = constructCommand<TimeStamped<Ping>>(
     "ping",
     (message, user, world) => {
         world.sendToUser(user, { type: 'pong', originalStamp: message.timeStampStr });
-        return truePromise;
     }
 );

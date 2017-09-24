@@ -3,7 +3,7 @@ import { ActorReference } from '../../../server/models/user';
 import React from "react";
 
 import OneTimeRender from "../OneTimeRender";
-import { ActorMoved, RoomDescription, TimeStamped } from '../../../server/messages/index';
+import { ActorMoved, RoomDescription, TimeStamped } from '../../../server/messages';
 import { Direction, getDirectionOpposite, getEnteringPhrase, getLeavingPhrase, DirectionNames } from '../../../server/models/direction';
 import { User } from '../../App';
 

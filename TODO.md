@@ -30,8 +30,8 @@
     - ~~Show room description when entering game~~
     - ~~look command to view contents of room~~
     - ~~"Brief Look" command.~~
-    - ~~Room communication, "say" command. ~~
-        - ~~Default to "say" if no token parsed. ~~
+    - ~~Room communication, "say" command.~~
+        - ~~Default to "say" if no token parsed.~~
     - ~~Show users in room descriptions.~~
     - ~~movement~~
     - ~~Show description upon entering room~~
@@ -48,6 +48,8 @@
     - ~~extend from actorReference?~~
 - ~~Refactor and introduce a more declarative "command" system.~~
 - "Who" list
+- Remove user input message type
+- Clean up Timestamp types.
 - Command list/help.
 - Look at refactoring "World" class to be cleaner. 
 - Wireframe layout of the UI, figure out where to put components.
@@ -248,6 +250,10 @@
 - Keypad navigation
     - Good idea in theory, bad execution options. Keyup is fired after change on some browsers so we wouldn't be able to cancel the entry of the number into the textbox. Gets messier from there.
 - in-game Mail?
+- Look into whether or not I should adopt a "prefix" command system.
+    - Symbol Prefix means anything not prefixed is speech. More natural for "social" games.
+    - Automatic interpretation of words as commands is more natural for "action" games. 
+    - Maybe allow users to configure which they prefer?
 
 
 ## Not in scope

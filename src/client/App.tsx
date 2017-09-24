@@ -9,7 +9,7 @@ import * as deepFreeze from 'deep-freeze';
 import { GameHeader } from "./GameHeader";
 import { OutputArea } from "./components/OutputArea";
 import { InputArea } from "./components/InputArea";
-import { Message, TimedMessage, TimeStamp } from '../server/messages/index';
+import { Message, TimedMessage, TimeStamp } from '../server/messages';
 
 import './css/styles.scss';
 import { In } from "../server/utils/linq";

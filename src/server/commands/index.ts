@@ -1,17 +1,18 @@
 import { getArray, ItemOrArray } from '../utils/index';
-import { Message, NullMessage, TimeStamped } from '../messages/index';
+import { Message, NullMessage, TimeStamped } from '../messages';
 import { User } from '../models/user';
 import { World } from '../models/world';
 import { In } from '../utils/linq';
 
-export type ExecuteFunction = (command: string, parameters: string, user: User, world: World) => Promise<boolean>;
+export type ExecuteFunction = (command: string, parameters: string, user: User, world: World) => (Promise<boolean> | void);
+export type ExecuteFunctionPromise = (command: string, parameters: string, user: User, world: World) => Promise<boolean>;
 export type ExecuteMessageFunction = (message: Message, user: User, world: World) => Promise<boolean>;
-export type ExecuteMessageFunctionTyped<T extends Message> = (message: T, user: User, world: World) => Promise<boolean>;
+export type ExecuteMessageFunctionTyped<T extends Message> = (message: T, user: User, world: World) => (Promise<boolean> | void);
 
 export interface Command {
-    keywords: ItemOrArray<string>;
+    keywords: string[];
     helptext: string;
-    execute: ExecuteFunction;
+    execute: ExecuteFunctionPromise;
     executeMessage: ExecuteMessageFunction;
 }
 
@@ -27,16 +28,16 @@ export function constructCommand<T extends TimeStamped<Message> = TimeStamped<Nu
     executeMessage?: ExecuteMessageFunctionTyped<T>
 ): Command {
     return {
-        keywords: keywords,
+        keywords: getArray(keywords),
         helptext: helptext,
         execute: (command, parameters, user, world) => {
             if (!execute || !In(command, ...getArray(keywords)))
                 return falsePromise;
-            return execute(command, parameters, user, world);
+            return execute(command, parameters, user, world) || truePromise;
         },
         executeMessage: (message: T, user, world) => {
             if (!executeMessage || message.type != messageName) return falsePromise;
-            return executeMessage(message, user, world)
+            return executeMessage(message, user, world) || truePromise;
         }
     }
 }

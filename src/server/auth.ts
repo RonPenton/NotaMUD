@@ -1,10 +1,10 @@
-import * as passport from "passport";
-import * as passport_local from "passport-local";
+import { User } from './models/user';
+import * as passport from 'passport';
+import * as passport_local from 'passport-local';
 import * as bcrypt from 'bcrypt-nodejs';
 import { ErrorRequestHandler } from 'express';
 import * as moment from 'moment';
-import User from '../models/user';
-import { World } from "../models/world";
+import { World } from "./models/world";
 const LocalStrategy = passport_local.Strategy;
 
 export const hash = (password: string): Promise<string> => {
