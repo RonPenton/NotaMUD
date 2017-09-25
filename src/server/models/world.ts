@@ -38,10 +38,11 @@ export class World implements Scriptable {
 
         const users = L(actors.values()).where(x => isUser(x)).toArray() as User[];
         this.users = L(users).toMap(u => u.uniquename);
+        this.nextActorId = L(users).max(x => x.id) + 1;
     }
 
     private readonly users = new Map<string, User>();
-    private nextActorId: number = 0;
+    private nextActorId: number = 1;
     public getNextActorId(): number { return this.nextActorId++; }
 
     private activeUsers = new Map<string, User>();
