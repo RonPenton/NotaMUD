@@ -51,8 +51,7 @@
 - ~~Add "forever" launcher.~~
 - ~~Remove user input message type~~
 - ~~Clean up Timestamp types.~~
-- Command list/help.
-- Look at refactoring "World" class to be cleaner. 
+- ~~Command list/help.~~
 - Wireframe layout of the UI, figure out where to put components.
     - Input/Output area.
     - Contextual action bar 
@@ -128,6 +127,7 @@
 
 # Milestone 0.4 - Infrastructure update
 
+- Look at refactoring "World" class to be cleaner. 
 - Figure out the fuckiness with the login system.
     - Signup should log you in. But it randomly doesn't. 
     - Logging in with invalid credentials only shows an error half the time.

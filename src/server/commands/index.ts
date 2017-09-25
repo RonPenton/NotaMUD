@@ -9,11 +9,18 @@ export type ExecuteFunctionPromise = (command: string, parameters: string, user:
 export type ExecuteMessageFunction = (message: Message, user: User, world: World) => Promise<boolean>;
 export type ExecuteMessageFunctionTyped<T extends Message> = (message: T, user: User, world: World) => (Promise<boolean> | void);
 
-export interface Command {
+export interface CommandReference {
     keywords: string[];
     helptext: string;
+}
+
+export interface Command extends CommandReference {
     execute: ExecuteFunctionPromise;
     executeMessage: ExecuteMessageFunction;
+}
+
+export const getCommandReference = (command: Command): CommandReference => {
+    return { keywords: command.keywords, helptext: command.helptext };
 }
 
 /** Fuck you, Brooke. */

@@ -47,13 +47,9 @@ export class World implements Scriptable {
     private activeUsers = new Map<string, User>();
     private userSockets = new Map<string, SocketIO.Socket>();
 
-    public getActiveUsers(): Iterable<User> {
-        return this.activeUsers.values();
-    }
-
-    public getUser(name: string): User | undefined {
-        return this.users.get(getCanonicalName(name));
-    }
+    public getActiveUsers(): Iterable<User> { return this.activeUsers.values(); }
+    public getUser(name: string) { return this.users.get(getCanonicalName(name)); }
+    public getCommands(): Iterable<Command> { return this.commands }
 
     public data: { [index: string]: any } = [];
 

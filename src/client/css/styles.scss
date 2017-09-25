@@ -125,3 +125,27 @@ hr.divider {
         list-style-type: none;
     }
 }
+
+.help {
+
+    .command {
+        .keywords {
+            margin-left: 10px;
+
+            &:before {
+                content: '-';
+                margin-right: 8px;
+            }
+
+            span {
+                color: #56E73F;
+                font-weight: bold;
+            }
+        }
+
+        .helptext {
+            color: #CCC;
+            margin-left: 40px;
+        }
+    }
+}

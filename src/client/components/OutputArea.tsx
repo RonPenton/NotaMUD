@@ -113,6 +113,8 @@ const OutputMessageComponent: React.SFC<OutputMessageProps> = (props) => {
 
         case 'active-users':
             return <Information.ActiveUsers {...m} />
+        case 'help':
+            return <Information.Help {...m} />
     }
 
     return empty;
