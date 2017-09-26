@@ -52,12 +52,12 @@
 - ~~Remove user input message type~~
 - ~~Clean up Timestamp types.~~
 - ~~Command list/help.~~
-- Wireframe layout of the UI, figure out where to put components.
-    - Input/Output area.
-    - Contextual action bar 
-        - room indicates react component to use.
-        - IE "bank" would send "BankContextComponent", which loads a bar that allows you to quickly withdraw or deposit money. 
-    - Minimap.
+- ~~Wireframe layout of the UI, figure out where to put components.~~
+    - ~~Input/Output area.~~
+    - ~~Contextual action bar~~
+        - ~~room indicates react component to use.~~
+        - ~~IE "bank" would send "BankContextComponent", which loads a bar that allows you to quickly withdraw or deposit money.~~
+    - ~~Minimap.~~
 - Icon Badges update
     - Support arbitrary colored badges
     - Support placement of multiple badges.
@@ -88,8 +88,10 @@
     - Timestamp format
     - Concise input mode
     - Store on server so settings travel with users to new computers/browsers
+- Update command system to use map lookup of command names to optimize parsing.
+- Emotes
 
-# Milestone 0.3 - Actor update
+# Milestone 0.3 - Item update
 
 - Items / Inventory
     - Physical items (each exists as its own entity; swords, armor)
@@ -101,6 +103,9 @@
     - Settings for auto-accept/auto-reject (by default, pop up UI)
     - Items in room UI panel
     - Items on person UI panel
+
+# Milestone 0.4 - Stats Update
+
 - Actor stats
     - A few predefined stats.
         - Health
@@ -122,7 +127,6 @@
 - Stat Display component (HP/SP/EXP)
 - Gender support
     - Male, Female, Neuter.
-- Emotes
 
 
 # Milestone 0.4 - Infrastructure update
