@@ -58,14 +58,14 @@
         - ~~room indicates react component to use.~~
         - ~~IE "bank" would send "BankContextComponent", which loads a bar that allows you to quickly withdraw or deposit money.~~
     - ~~Minimap.~~
-- Icon Badges update
-    - Support arbitrary colored badges
-    - Support placement of multiple badges.
-    - List-based placement.
-        - Starting corner
-        - Flow direction
+- ~~Icon Badges update~~
+    - ~~Support arbitrary colored badges~~
+    - ~~Support placement of multiple badges.~~
+    - ~~List-based placement.~~
+        - ~~Starting corner~~
+        - ~~Flow direction~~
 - Minimap
-    - Figure out how to represent up/down links on the map. 
+    - ~~Figure out how to represent up/down links on the map.~~
     - Limited A* navigation by clicking on minimap.
     - Hide rooms user has not visited.
         - Wrinkle. Storing visited data on client side is optimal, because there will be a lot of it.

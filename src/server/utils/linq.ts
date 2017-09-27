@@ -225,6 +225,15 @@ export class LinqContainer<T> implements Iterable<T> {
         return new LinqContainer(this.toArray().map(predicate));
     }
 
+    public selectIndex<U>(predicate: Func2<T, number, U>): LinqContainer<U> {
+        let i = 0;
+        const items = [];
+        for(let item of this.values) {
+            items.push(predicate(item, i++));
+        }
+        return new LinqContainer(items);
+    }
+
     public take(amount: number): LinqContainer<T> {
         var array = this._asArray();
         if (array)

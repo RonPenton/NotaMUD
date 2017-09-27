@@ -1,17 +1,12 @@
 import React from 'react';
 import Spinner from "./Spinner";
 
-export type SvgProps = {
-    backgroundPath: string;
-    foregroundPath: string;
-} & SvgLoaderProps
-
-export type SvgLoaderProps = {
+export type GameIconProps = {
     url: string;
     size: number;
-} & SvgPresetProps
+} & GameIconPresetProps
 
-export type SvgPresetProps = {
+export type GameIconPresetProps = {
     foreground: string;
     foregroundOpacity?: number,
 
@@ -32,64 +27,53 @@ export interface Shadow {
     y?: number;
 }
 
-export interface SvgLoaderState {
-    loaded: boolean;
+let _iconId = 0;
+
+export interface GameIconState {
     backgroundPath?: string;
     foregroundPath?: string;
 }
-export class SvgLoader extends React.Component<SvgLoaderProps, SvgLoaderState> {
-    constructor(props: SvgLoaderProps) {
+export class GameIcon extends React.PureComponent<GameIconProps, GameIconState> {
+    readonly id: number;
+    constructor(props: GameIconProps) {
         super(props);
-        this.state = { loaded: false };
-        this.load();
+        this.state = {};
+        this.id = _iconId++;
+        GameIcon.loadSvg(this.props.url).then(doc => this.load(doc)).catch(e => alert(e));
     }
 
-    private load() {
-        const req = new XMLHttpRequest;
-        req.open("GET", this.props.url);
-        req.onreadystatechange = () => {
-            if (req.readyState == XMLHttpRequest.DONE && req.status == 200) {
-                if (!req.responseXML) {
-                    alert("error loading SVG: " + this.props.url);
-                    return;
+    public static loadSvg(url: string): Promise<Document> {
+        return new Promise<Document>((resolve, reject) => {
+            const req = new XMLHttpRequest;
+            req.open("GET", url);
+            req.onreadystatechange = () => {
+                if (req.readyState == XMLHttpRequest.DONE && req.status == 200) {
+                    if (!req.responseXML) {
+                        reject("error loading SVG: " + url);
+                        return;
+                    }
+                    resolve(req.responseXML);
                 }
-                this.loadSvg(req.responseXML);
             }
-        }
-        req.send();
+            req.send();
+        });
     }
 
-    private loadSvg(doc: Document) {
+    private load(doc: Document) {
         const svg = doc.firstChild as SVGElement;
         const background = svg.firstElementChild as SVGPathElement;
         const foreground = svg.lastElementChild as SVGPathElement;
 
         this.setState({
             ...this.state,
-            loaded: true,
             backgroundPath: background.attributes.getNamedItem("d").value,
             foregroundPath: foreground.attributes.getNamedItem("d").value
         });
     }
 
     render() {
-        if (!this.state.loaded || !this.state.backgroundPath || !this.state.foregroundPath)
+        if (!this.state.backgroundPath || !this.state.foregroundPath)
             return <Spinner />;
-        return <Svg { ...this.props } backgroundPath={this.state.backgroundPath} foregroundPath={this.state.foregroundPath} />
-
-    }
-}
-
-let _svgId = 0;
-
-export class Svg extends React.Component<SvgProps> {
-    readonly id: number;
-    constructor() {
-        super();
-        this.id = _svgId++;
-    }
-
-    render() {
         const style = {
             width: `${this.props.size}px`,
             height: `${this.props.size}px`
@@ -98,16 +82,17 @@ export class Svg extends React.Component<SvgProps> {
         const fopacity = this.props.foregroundOpacity === undefined ? 1 : this.props.foregroundOpacity;
         const filter = this.props.shadow ? `url(#shadow-${this.id})` : undefined;
         return (
-            <svg viewBox="0 0 512 512" style={style}>
+            <svg viewBox="0 0 512 512" style={style} className="game-icon">
                 {this.renderDefs()}
-                <path d={this.props.backgroundPath} fill={this.props.background} opacity={bopacity} stroke="#FFF" strokeWidth={8} />
-                <path d={this.props.foregroundPath}
+                <path d={this.state.backgroundPath} fill={this.props.background} opacity={bopacity} />
+                <path d={this.state.foregroundPath}
                     fill={this.props.foreground}
                     opacity={fopacity}
                     filter={filter}
                     stroke={this.props.strokeColor}
                     strokeWidth={this.props.strokeWidth}
                 />
+                {this.props.children}
             </svg>
         );
     }
@@ -137,8 +122,7 @@ export class Svg extends React.Component<SvgProps> {
     }
 }
 
-
-export const Presets = {
+export const Presets /*: { [key: string]: GameIconPresetProps }*/ = {
     Default: {
         background: "#000",
         foreground: "#fff"
