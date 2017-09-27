@@ -41,7 +41,7 @@ export class OutputArea extends React.Component<OutputAreaProps> {
                 ref={(input) => this.div = input}>
                 {messages}
 
-                <GameIcon { ...Presets.Gold } url="/icons/battle-axe.svg" size={128}>
+                {/* <GameIcon { ...Presets.Gold } url="/icons/battle-axe.svg" size={128}>
                     <IconBadge url="/icons/badges/arrow-up.svg" />
                 </GameIcon>
                 <GameIcon { ...Presets.Crimson } url="/icons/battle-axe.svg" size={128}>
@@ -52,7 +52,7 @@ export class OutputArea extends React.Component<OutputAreaProps> {
                         placement="bottom-right"
                         items={[{ url: "/icons/badges/arrow-down.svg" }, { url: "/icons/badges/arrow-up.svg" }]}
                     />
-                </GameIcon>
+                </GameIcon> */}
             </div>
         );
     }
