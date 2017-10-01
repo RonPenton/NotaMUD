@@ -9,7 +9,7 @@
         "init-db": "npm run build && node ./build/setup/index.js",
         "build": "npm run-script clean && npm run-script tools && npm run-script build-server && npm run-script build-client && npm run-script copy-data",
         "tools": "npm run-script build-tools && npm run-script run-tools",
-        "clean": "rimraf ./build",
+        "clean": "rimraf ./build && rimraf ./build-tools",
         "build-server": "tsc --project ./src/server/tsconfig.json",
         "build-client": "webpack --config ./src/client/webpack.config.js",
         "build-tools": "tsc --project ./src/tools/tsconfig.json",

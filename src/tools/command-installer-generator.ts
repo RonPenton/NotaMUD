@@ -69,13 +69,10 @@ function getFiles(location: string): string[] {
         return { name: fp, stat: fs.statSync(fp) };
     });
 
-    let ts = files.filter(x => isValidFile(x.name)).map(x => x.name);
     const directories = files.filter(x => x.stat.isDirectory());
-    const recursed = directories.map(x => getFiles(x.name));
-    recursed.forEach(x => ts = ts.concat(x));
-    return ts;
-}
-
-function isValidFile(name: string): boolean {
-    return name.endsWith(".ts") || name.endsWith(".tsx");
+    const ts = [
+        files.filter(x => /\.tsx?/g.test(x.name)).map(x => x.name),
+        ...directories.map(x => getFiles(x.name))
+    ];
+    return ts.reduce((a, i) => a.concat(i), []);
 }
