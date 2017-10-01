@@ -1,3 +1,5 @@
+import { Generic, handle } from './commands/index';
+import { ErrorComponent } from './commands/error';
 import { split } from '../server/utils/parse';
 import React from "react";
 import * as ReactDOM from 'react-dom';
@@ -13,6 +15,9 @@ import { Message, TimedMessage, TimeStamp } from '../server/messages';
 
 import './css/styles.scss';
 import { In } from "../server/utils/linq";
+
+import { install as installCommands } from './commands/install-commands';
+installCommands();
 
 declare var document: {
     uniquename: string;
@@ -30,32 +35,34 @@ export type OutputMessage = TimedMessage & {
     __key: number;
 }
 
-let lastMessageId = 0;
-
 type ConnectionState = "disconnected" | "connecting" | "connected";
 
 export interface ClientState {
-    messages: OutputMessage[];
+    outputs: JSX.Element[];
     connectionState: ConnectionState;
 }
 
-export class App extends React.Component<{}, ClientState> {
+export interface GameContext {
+    addOutput: (output: JSX.Element) => void;
+}
+
+export class App extends React.Component<{}, ClientState> implements GameContext {
     inputArea: InputArea | null = null;
     readonly socket: SocketIOClient.Socket;
 
     constructor() {
         super();
-        this.state = { messages: [this.getConnectingMessage()], connectionState: "connecting" };
+        this.state = { outputs: [this.getConnectingMessage()], connectionState: "connecting" };
         this.socket = io('', { transports: ['websocket'] });
         this.setupSocket(this.socket);
     }
 
     private getSystemMessage(message: string) {
-        return this.bundleMessage({ type: 'system', timeStampStr: moment().toISOString(), message: message });
+        return <Generic time={moment().toISOString()}>{message}</Generic>;
     }
 
     private getErrorMessage(message: string) {
-        return this.bundleMessage({ type: 'error', timeStampStr: moment().toISOString(), message: message });
+        return <ErrorComponent time={moment().toISOString()}>{message}</ErrorComponent>;
     }
 
     private getConnectingMessage() {
@@ -71,16 +78,11 @@ export class App extends React.Component<{}, ClientState> {
     }
 
     private getUserInputMessage(text: string) {
-        return this.bundleMessage({ type: 'text-command', timeStampStr: moment().toISOString(), message: text });
+        return <div className="user-input">{`${text}`}</div>;;
     }
 
-    private bundleMessage(message: TimedMessage) {
-        return { ...message, __key: lastMessageId++ };
-    }
-
-    private addMessage(message: TimedMessage) {
-        const bundle = this.bundleMessage(message);
-        this.setState({ messages: this.state.messages.concat(bundle) });
+    public addOutput(output: JSX.Element) {
+        this.setState({ outputs: this.state.outputs.concat(output) });
     }
 
     private setupSocket(socket: SocketIOClient.Socket) {
@@ -89,20 +91,20 @@ export class App extends React.Component<{}, ClientState> {
         });
 
         socket.on('connect_timeout', () => {
-            this.addMessage(this.getTimeoutMessage());
+            this.addOutput(this.getTimeoutMessage());
             this.setState({ connectionState: "disconnected" });
         });
 
         socket.on('connect_error', (error: any) => {
             console.log(error);
             if (this.state.connectionState != "disconnected") {
-                this.addMessage(this.getTimeoutMessage());
+                this.addOutput(this.getTimeoutMessage());
                 this.setState({ connectionState: "disconnected" });
             }
         });
 
         socket.on('disconnect', () => {
-            this.addMessage(this.getDisconnectedMessage());
+            this.addOutput(this.getDisconnectedMessage());
             this.setState({ connectionState: "disconnected" });
         });
     }
@@ -117,7 +119,9 @@ export class App extends React.Component<{}, ClientState> {
                 break;
         }
 
-        this.addMessage(message);
+        handle(message, this);
+
+        //this.addOutput(message);
         return;
     }
 
@@ -125,7 +129,7 @@ export class App extends React.Component<{}, ClientState> {
         return (
             <div className="game">
                 <GameHeader username={User.name} />
-                <OutputArea messages={this.state.messages} onFocusClick={this.focusClick} />
+                <OutputArea outputs={this.state.outputs} onFocusClick={this.focusClick} />
                 {this.getInputArea()}
             </div>
         );
@@ -155,7 +159,7 @@ export class App extends React.Component<{}, ClientState> {
             return;
 
         this.setState({
-            messages: this.state.messages.concat(this.getConnectingMessage()),
+            outputs: this.state.outputs.concat(this.getConnectingMessage()),
             connectionState: "connecting"
         });
         this.socket.connect();
@@ -172,14 +176,14 @@ export class App extends React.Component<{}, ClientState> {
         }
 
         const { head, tail } = split(text);
-        this.addMessage(this.getUserInputMessage(text));
+        this.addOutput(this.getUserInputMessage(text));
 
         if (head == 'ping') {
             this.sendMessage({ type: 'ping' });
             return;
         }
 
-        if (In(head, 'l', 'lool')) {
+        if (In(head, 'l', 'look')) {
             this.sendMessage({ type: 'look', subject: tail })
             return;
         }

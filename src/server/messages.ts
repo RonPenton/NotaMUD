@@ -21,6 +21,7 @@ export type ToActor = { to: ActorReference };
 
 export type Error = GenericMessage<'error'>;
 export type System = GenericMessage<'system'>;
+export type Debug = GenericMessage<'debug'>;
 export type TextCommand = GenericMessage<'text-command'>;
 export type Connected = BaseMessage<'connected'> & FromUser;
 export type Disconnected = BaseMessage<'disconnected'> & FromUser;
@@ -42,7 +43,7 @@ export type Help = BaseMessage<'help'> & { commands: CommandReference[] };
 
 export type Message =
     NullMessage |
-    Error | System |
+    Error | System | Debug |
     TextCommand |
     Connected | Disconnected |
     TalkGlobal | TalkRoom | TalkPrivate |

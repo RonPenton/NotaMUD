@@ -64,22 +64,20 @@
     - ~~List-based placement.~~
         - ~~Starting corner~~
         - ~~Flow direction~~
+- ~~Update Client command handler to be more extensible, like server command handler.~~
 - Minimap
     - ~~Figure out how to represent up/down links on the map.~~
-    - Limited A* navigation by clicking on minimap.
-    - Hide rooms user has not visited.
-        - Wrinkle. Storing visited data on client side is optimal, because there will be a lot of it.
-        - But information becomes lost if user logs in on different computer/clears cache.
-        - Maybe store in cloud db until such a time as it becomes an actual problem.
-        - Also consider ways to optimize data storage. Consider storing visited ranges. 
-            - Many rooms are clustered into areas and will have closely-numbered indicies. Saying you've visited 1-100 is a lot better than 1, 2, 3, 4, ...100. Dynamically rechunk ranges as rooms are visited. 
-            - Consider bitvectors as well. Probably won't make the cut due to JSON serialization issues, but still worth a look.
-        - Map system assumes all rooms are laid out on a consistent cartisian 3D grid, with room 0 starting at (0,0,0), conceptually.
-            - all cartesian coordinates are calculated based on walking recursively through the map and taking note of the steps required to reach each room.
-            - Two separate rooms with identical coordinates will cause an assertion failure.
-            - Calculate cartesian coordinates on game load. 
-            - Cartesian coordinates will be important for client to map rooms out efficiently, so that it won't have to perform a ridiculously large A* walk to find rooms you're next to, but take 200 transitions to actually get to because of maze-like exits. 
-            - Graphical editor in later milestone will eventually help maintain this assertion at design time. 
+    - Save information about visited rooms locally, as user visits each room. 
+    - Draw minimap
+        - Show exits from each room. 
+        - Each room can have its own icon.  
+    - Map system assumes all rooms are laid out on a consistent cartisian 3D grid, with room 0 starting at (0,0,0), conceptually.
+        - all cartesian coordinates are calculated based on walking recursively through the map and taking note of the steps required to reach each room.
+        - Two separate rooms with identical coordinates will cause an assertion failure.
+        - Calculate cartesian coordinates on game load. 
+        - Cartesian coordinates will be important for client to map rooms out efficiently, so that it won't have to perform a ridiculously large A* walk to find rooms you're next to, but take 200 transitions to actually get to because of maze-like exits. 
+        - Graphical editor in later milestone will eventually help maintain this assertion at design time. 
+
 - Show users in room on separate UI panel.
 - UI Form Components for accepting user input on panels (Settings, etc).
 - Settings system
@@ -111,6 +109,8 @@
         - Health
         - Energy/Skill points/Mana
         - Experience points
+        - Rooted
+        - Frozen
         - More to come.
     - New Stat categories can also be added by extension scripts dynamically
     - Store base value.
@@ -129,7 +129,7 @@
     - Male, Female, Neuter.
 
 
-# Milestone 0.4 - Infrastructure update
+# Milestone 0.5 - Infrastructure update
 
 - Look at refactoring "World" class to be cleaner. 
 - Figure out the fuckiness with the login system.
@@ -143,27 +143,26 @@
     - Command to alter player role [admin].
         - A person of role **X** may only alter the roles of people currently lower than **X**
         - A person of role **X** may never raise them *to* **X**, except Owner. 
-- Data persistence
-    - Determine strategy. 
-        - Update entire database at specific intervals? Might result in "shuddering".
-        - Update parts of database at smaller intervals? Might result in data inconsistency.
-        - Track entities which have been altered and only update those? Possibly the best solution, though more technically complex.
-    - Create a serializer that strips out extra properties contained on DB items which shouldn't go into the schema.
-        - Room.actors Set, for example.
-- Additional Admin commands
-    - Shut down server.
-    - Disconnect user.
-    - Suspend user. 
-- Enhance server-side command parser.
-    - Think about making it more declarative.
 - Game timer
     - Milliseconds since the game began running.
     - Only ever incremented while game is running.
         - Unfortunately will be out of sync with real-world time
         - But we don't want timers to have expired while the server is down. Could result in unstable game state and unpredictable behavior.
     - Movement timer (or can this be tied into rate limiting inputs?)
+- Data persistence
+    - Update entities to use Proxy class to track changes.
+    - Track entities which have been altered and only update those
+    - Create a serializer that strips out extra properties contained on DB items which shouldn't go into the schema.
+        - Room.actors Set, for example.
+    - Make world stats saved in DB.
+- Additional Admin commands
+    - Shut down server.
+    - Disconnect user.
+    - Suspend user. 
+- Enhance server-side command parser.
+    - Think about making it more declarative.
 
-# Milestone 0.5 - Extensibility update
+# Milestone 0.6 - Extensibility update
 
 - Extensibility Engine
     - Hooks on items/rooms/actors
@@ -176,7 +175,7 @@
             - Consider insertion-sort, since list of output components will be almost entirely sorted already.
     - Ability to add new emotes.
 
-# Milestone 0.6 - Quality-of-life improvements
+# Milestone 0.7 - Quality-of-life improvements
 
 - Introduce an inline color code syntax for colorizing output.
     - regex searchable
@@ -188,7 +187,7 @@
 - URL detection and hyperlink insertion in chat messages.
 - Retain last X global chats (configurable) to allow a user to review the last few bits of conversation.
 
-## Milestone 0.7 - Rooms Update 2
+## Milestone 0.8 - Rooms Update 2
 
 - Enhance rooms design
     - Add first-class support for doors, gates.
@@ -202,13 +201,19 @@
                 - Enforced by graphical editor later on. 
     - Keys (quantifiable item)
         - onUse extensibility point (to allow keys to break upon use)
+- Minimap Improvements
+    - Hide rooms user has not visited.
+        - Server keeps track of which rooms user has visited
+            - Use bitvector (Byte Array) to pack, then Base64 to compress. 
+    - Limited A* navigation by clicking on minimap.
+    - Show doors?
 
 
-## Milestone 0.8 - Crafting update
+## Milestone 0.9 - Crafting update
 
 - Crafting
 
-## Milestone 0.9-?
+## Milestone 0.10-1.0
 
 - Monsters
 - Character Progression

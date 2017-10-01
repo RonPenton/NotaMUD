@@ -4305,6 +4305,11 @@
       "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/require-main-filename/-/require-main-filename-1.0.1.tgz",
       "integrity": "sha1-l/cXtp1IeE9fUmpsWqj/3aBVpNE="
     },
+    "requirejs": {
+      "version": "2.3.5",
+      "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/requirejs/-/requirejs-2.3.5.tgz",
+      "integrity": "sha1-YXuay7yzNlQO9JFNeQMjqNS4YbA="
+    },
     "resolve": {
       "version": "1.4.0",
       "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/resolve/-/resolve-1.4.0.tgz",
