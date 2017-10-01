@@ -3,13 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Babylon = require("babylon");
 const path = require("path");
 const fs = require("fs");
-const endsWith = function (str, searchStr, position = 0) {
-    if (!(position < str.length))
-        position = str.length;
-    else
-        position |= 0;
-    return str.substr(position - searchStr.length, searchStr.length) === searchStr;
-};
 const location = "src/client/commands/";
 const files = getFiles("./" + location);
 generateOutputFile(files);
@@ -73,5 +66,5 @@ function getFiles(location) {
     return ts;
 }
 function isValidFile(name) {
-    return endsWith(name, ".ts") || endsWith(name, ".tsx");
+    return name.endsWith(".ts") || name.endsWith(".tsx");
 }

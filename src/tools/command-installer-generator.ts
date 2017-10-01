@@ -3,12 +3,6 @@ import * as Babel from 'babel-types'
 import * as path from 'path'
 import * as fs from 'fs'
 
-const endsWith = function (str: string, searchStr: string, position: number = 0) {
-    if (!(position < str.length)) position = str.length;
-    else position |= 0;
-    return str.substr(position - searchStr.length, searchStr.length) === searchStr;
-};
-
 const location = "src/client/commands/"
 const files = getFiles("./" + location);
 generateOutputFile(files);
@@ -83,5 +77,5 @@ function getFiles(location: string): string[] {
 }
 
 function isValidFile(name: string): boolean {
-    return endsWith(name, ".ts") || endsWith(name, ".tsx");
+    return name.endsWith(".ts") || name.endsWith(".tsx");
 }
