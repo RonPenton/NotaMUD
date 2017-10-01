@@ -4,6 +4,19 @@
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
+    "@types/babel-types": {
+      "version": "6.25.1",
+      "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/@types/babel-types/-/babel-types-6.25.1.tgz",
+      "integrity": "sha1-zo8SakQD4R4bADOkJPEWOK+seIk="
+    },
+    "@types/babylon": {
+      "version": "6.16.2",
+      "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/@types/babylon/-/babylon-6.16.2.tgz",
+      "integrity": "sha1-BizmO2k9mvHCRvWu35KLycMFicg=",
+      "requires": {
+        "@types/babel-types": "6.25.1"
+      }
+    },
     "@types/bcrypt-nodejs": {
       "version": "0.0.30",
       "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/@types/bcrypt-nodejs/-/bcrypt-nodejs-0.0.30.tgz",
@@ -466,6 +479,38 @@
           "integrity": "sha1-U10EXOa2Nj+kARcIRimZXp3zJMc="
         }
       }
+    },
+    "babel-runtime": {
+      "version": "6.26.0",
+      "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/babel-runtime/-/babel-runtime-6.26.0.tgz",
+      "integrity": "sha1-llxwWGaOgrVde/4E/yM3vItWR/4=",
+      "requires": {
+        "core-js": "2.5.1",
+        "regenerator-runtime": "0.11.0"
+      },
+      "dependencies": {
+        "core-js": {
+          "version": "2.5.1",
+          "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/core-js/-/core-js-2.5.1.tgz",
+          "integrity": "sha1-rmh03GaTd4m4B1T/VCjfZoGcpQs="
+        }
+      }
+    },
+    "babel-types": {
+      "version": "6.26.0",
+      "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/babel-types/-/babel-types-6.26.0.tgz",
+      "integrity": "sha1-o7Bz+Uq0nrb6Vc1lInozQ4BjJJc=",
+      "requires": {
+        "babel-runtime": "6.26.0",
+        "esutils": "2.0.2",
+        "lodash": "4.17.4",
+        "to-fast-properties": "1.0.3"
+      }
+    },
+    "babylon": {
+      "version": "7.0.0-beta.27",
+      "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/babylon/-/babylon-7.0.0-beta.27.tgz",
+      "integrity": "sha1-tu3TDvMGGeL2MOtSWF/dqE5lQs0="
     },
     "backo2": {
       "version": "1.0.2",
@@ -4186,6 +4231,11 @@
       "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/regenerate/-/regenerate-1.3.2.tgz",
       "integrity": "sha1-0ZQcZ7rUN+G+dkM63Vs4X5WxkmA="
     },
+    "regenerator-runtime": {
+      "version": "0.11.0",
+      "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/regenerator-runtime/-/regenerator-runtime-0.11.0.tgz",
+      "integrity": "sha1-flT+W1zNXWYk6mJVw0c74JC4AuE="
+    },
     "regex-cache": {
       "version": "0.4.3",
       "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/regex-cache/-/regex-cache-0.4.3.tgz",
@@ -5064,6 +5114,11 @@
       "version": "1.0.1",
       "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/to-arraybuffer/-/to-arraybuffer-1.0.1.tgz",
       "integrity": "sha1-fSKbH8xjfkZsoIEYCDanqr/4P0M="
+    },
+    "to-fast-properties": {
+      "version": "1.0.3",
+      "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/to-fast-properties/-/to-fast-properties-1.0.3.tgz",
+      "integrity": "sha1-uDVx+k2MJbguIxsG46MFXeTKGkc="
     },
     "tough-cookie": {
       "version": "2.3.2",

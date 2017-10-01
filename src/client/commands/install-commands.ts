@@ -1,6 +1,4 @@
-import { install as installCommand } from "./index";
-
-
+import { install as installCommand } from './index';
 export function install() {
     installCommand(require('./active-users').command);
     installCommand(require('./actor-moved').command);

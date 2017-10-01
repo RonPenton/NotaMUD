@@ -12,6 +12,15 @@
             "outFiles": [
                 "${workspaceRoot}/build/**/*.js"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Tools",
+            "program": "${workspaceRoot}/build-tools/command-installer-generator.js",
+            "outFiles": [
+                "${workspaceRoot}/**/*"
+            ]
         }
     ]
 }
