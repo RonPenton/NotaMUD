@@ -1383,6 +1383,11 @@
       "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/destroy/-/destroy-1.0.4.tgz",
       "integrity": "sha1-l4hXRCxEdJ5CBmE+N5RiBYJqvYA="
     },
+    "dexie": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/dexie/-/dexie-2.0.0.tgz",
+      "integrity": "sha1-0617eqKejegupKjgmkzL+oAhPw0="
+    },
     "diff": {
       "version": "3.3.1",
       "resolved": "https://artifactory.devops.ellucian.com/artifactory/api/npm/npmjs/diff/-/diff-3.3.1.tgz",
@@ -5148,6 +5153,11 @@
         "loader-utils": "1.1.0",
         "semver": "5.4.1"
       }
+    },
+    "ts-priority-queue": {
+      "version": "0.1.1",
+      "resolved": "https://registry.npmjs.org/ts-priority-queue/-/ts-priority-queue-0.1.1.tgz",
+      "integrity": "sha512-jNwbk4ItfTHVopnlQ/Z7UUlbF1TNsdXS2cb1W8kI6lm8UauIjs8CYSOEh1E/yrIEhl+HVFUMp60ma6fKuvBhBQ=="
     },
     "tslib": {
       "version": "1.7.1",

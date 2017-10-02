@@ -1,8 +1,6 @@
 import React from 'react';
 import { bind } from 'decko';
 
-import { OutputMessage } from '../App';
-
 export interface OutputAreaProps {
     outputs: JSX.Element[];
     onFocusClick: () => void;
@@ -58,8 +56,3 @@ export class OutputArea extends React.Component<OutputAreaProps> {
         }
     }
 }
-
-export interface OutputMessageProps {
-    message: OutputMessage;
-}
-

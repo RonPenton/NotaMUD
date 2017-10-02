@@ -11,10 +11,11 @@ import * as deepFreeze from 'deep-freeze';
 import { GameHeader } from "./GameHeader";
 import { OutputArea } from "./components/OutputArea";
 import { InputArea } from "./components/InputArea";
-import { Message, TimedMessage, TimeStamp } from '../server/messages';
+import * as Messages from '../server/messages';
+import { In } from "../server/utils/linq";
+import { clientGameDb } from './components/MiniMap';
 
 import './css/styles.scss';
-import { In } from "../server/utils/linq";
 
 import { install as installCommands } from './commands/install-commands';
 installCommands();
@@ -31,10 +32,6 @@ export const User = deepFreeze({
     id: document.actorid
 });
 
-export type OutputMessage = TimedMessage & {
-    __key: number;
-}
-
 type ConnectionState = "disconnected" | "connecting" | "connected";
 
 export interface ClientState {
@@ -44,6 +41,7 @@ export interface ClientState {
 
 export interface GameContext {
     addOutput: (output: JSX.Element) => void;
+    addRoomInformation: (room: Messages.RoomDescription) => void;
 }
 
 export class App extends React.Component<{}, ClientState> implements GameContext {
@@ -86,7 +84,7 @@ export class App extends React.Component<{}, ClientState> implements GameContext
     }
 
     private setupSocket(socket: SocketIOClient.Socket) {
-        socket.on('message', (message: TimedMessage) => {
+        socket.on('message', (message: Messages.TimedMessage) => {
             this.processMessageFromServer(message);
         });
 
@@ -109,10 +107,7 @@ export class App extends React.Component<{}, ClientState> implements GameContext
         });
     }
 
-    private processMessageFromServer(message: TimedMessage) {
-        //TODO: kind of a weak design here. Messages that don't output to the screen need to 
-        // remember to 'return' after they're handled. Think of a better way to do this.
-
+    private processMessageFromServer(message: Messages.TimedMessage) {
         switch (message.type) {
             case 'connected':
                 this.setState({ connectionState: "connected" });
@@ -120,8 +115,6 @@ export class App extends React.Component<{}, ClientState> implements GameContext
         }
 
         handle(message, this);
-
-        //this.addOutput(message);
         return;
     }
 
@@ -191,8 +184,12 @@ export class App extends React.Component<{}, ClientState> implements GameContext
         this.sendMessage({ type: 'text-command', message: text });
     }
 
-    private sendMessage(message: Message) {
-        this.socket.emit('message', TimeStamp(message));
+    private sendMessage(message: Messages.Message) {
+        this.socket.emit('message', Messages.TimeStamp(message));
+    }
+
+    public async addRoomInformation(room: Messages.RoomDescription) {
+        await clientGameDb.addRoomReference(room);
     }
 }
 

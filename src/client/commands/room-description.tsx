@@ -11,6 +11,7 @@ import * as Messages from '../../server/messages';
 export const command = create('room-description',
     (message: Messages.TimeStamped<Messages.RoomDescription>, context: GameContext) => {
         context.addOutput(<Description {...message} />);
+        context.addRoomInformation(message);
     });
 
 export class Description extends OneTimeRender<Messages.RoomDescription> {

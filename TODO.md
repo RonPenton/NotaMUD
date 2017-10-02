@@ -39,7 +39,7 @@
 - ~~Reorganize Message Components~~
 - ~~Public Server~~
 
-# Milestone 0.2 - UI update
+## Milestone 0.2 - UI update
 
 - ~~Rename ConcerningUser to UserReference~~
     - ~~rename properties~~ 
@@ -67,7 +67,7 @@
 - ~~Update Client command handler to be more extensible, like server command handler.~~
 - Minimap
     - ~~Figure out how to represent up/down links on the map.~~
-    - Save information about visited rooms locally, as user visits each room. 
+    - ~~Save information about visited rooms locally, as user visits each room.~~
     - Draw minimap
         - Show exits from each room. 
         - Each room can have its own icon.  
@@ -89,7 +89,7 @@
 - Update command system to use map lookup of command names to optimize parsing.
 - Emotes
 
-# Milestone 0.3 - Item update
+## Milestone 0.3 - Item update
 
 - Items / Inventory
     - Physical items (each exists as its own entity; swords, armor)
@@ -102,7 +102,7 @@
     - Items in room UI panel
     - Items on person UI panel
 
-# Milestone 0.4 - Stats Update
+## Milestone 0.4 - Stats Update
 
 - Actor stats
     - A few predefined stats.
@@ -129,7 +129,7 @@
     - Male, Female, Neuter.
 
 
-# Milestone 0.5 - Infrastructure update
+## Milestone 0.5 - Infrastructure update
 
 - Look at refactoring "World" class to be cleaner. 
 - Figure out the fuckiness with the login system.
@@ -162,7 +162,7 @@
 - Enhance server-side command parser.
     - Think about making it more declarative.
 
-# Milestone 0.6 - Extensibility update
+## Milestone 0.6 - Extensibility update
 
 - Extensibility Engine
     - Hooks on items/rooms/actors
@@ -175,7 +175,7 @@
             - Consider insertion-sort, since list of output components will be almost entirely sorted already.
     - Ability to add new emotes.
 
-# Milestone 0.7 - Quality-of-life improvements
+## Milestone 0.7 - Quality-of-life improvements
 
 - Introduce an inline color code syntax for colorizing output.
     - regex searchable
