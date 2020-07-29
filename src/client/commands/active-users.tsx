@@ -1,11 +1,10 @@
 import { OneTimeRender } from '../components/OneTimeRender';
-import { GameContext } from '../App';
 import React from 'react';
 import { create } from './index';
 import * as Messages from '../../server/messages';
 
 export const command = create('active-users',
-    (message: Messages.ActiveUsers, context: GameContext) => {
+    (message: Messages.ActiveUsers, context) => {
         context.addOutput(<ActiveUsers {...message} />);
     });
 

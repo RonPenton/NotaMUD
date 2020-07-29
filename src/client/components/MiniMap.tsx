@@ -10,6 +10,8 @@ export class ClientGameDatabase extends Dexie {
         this.version(1).stores({
             rooms: '&id'
         });
+
+        this.rooms = this.table("rooms");
     }
 
     public async addRoomReference(room: Messages.RoomDescription) {

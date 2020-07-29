@@ -25,7 +25,7 @@ function getCommandExportFiles(files: string[]): string[] {
 }
 
 function getCommandExportsFromFile(file: string): string[] {
-    const data = fs.readFileSync(file, { encoding: "UTF8" });
+    const data = fs.readFileSync(file, { encoding: "utf8" });
     const ast = Babylon.parse(data, { sourceType: "module", plugins: ["jsx", "typescript" as any] });
     return getExports(ast.program.body);
 }

@@ -1,6 +1,7 @@
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
-var extractPlugin = new ExtractTextPlugin({
+var extractPlugin = new MiniCssExtractPlugin({
     filename: 'bundle.css'
 });
 
@@ -11,12 +12,11 @@ module.exports = {
         path: __dirname + "/../../build/public"
     },
 
-    // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
 
     resolve: {
-        // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: [".ts", ".tsx", ".js", ".json"]
+        extensions: [".ts", ".tsx", ".js", ".json"],
+        plugins: [new TsconfigPathsPlugin({ configFile: './src/client/tsconfig.json' })]
     },
 
     module: {
@@ -24,19 +24,19 @@ module.exports = {
             { test: /\.tsx?$/, loader: "ts-loader" },
             {
                 test: /\.scss$/,
-                use: extractPlugin.extract({
-                    use: [
-                        'css-loader',
-                        'sass-loader'
-                    ]
-                })
+                use: [
+                    {
+                        loader: MiniCssExtractPlugin.loader
+                    },
+                    'css-loader',
+                    'sass-loader'
+                ]
             }
         ]
     },
 
     plugins: [
         extractPlugin,
-        
     ],
 
 };

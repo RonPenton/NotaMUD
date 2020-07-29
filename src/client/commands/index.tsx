@@ -4,12 +4,12 @@ import { GameContext } from '../App';
 import { Message, TimeStamped } from '../../server/messages';
 import moment from 'moment';
 
-export type ExecuteFunction = (message: Message, context: GameContext) => (Promise<boolean> | void);
-export type ExecuteFunctionPromise = (message: Message, context: GameContext) => Promise<boolean>;
+export type ExecuteFunction<T extends Message> = (message: T, context: GameContext) => (Promise<boolean> | void);
+export type ExecuteFunctionPromise<T extends Message> = (message: T, context: GameContext) => Promise<boolean>;
 
-export type Command = {
+export type Command<T extends Message = Message> = {
     name: string,
-    execute: ExecuteFunction
+    execute: ExecuteFunction<T>
 }
 
 export type Commands = Map<string, Command>;
@@ -21,7 +21,7 @@ export function install(command: Command) {
 export type InstallFunction = (command: Command) => void;
 export type CreateFunction = (install: InstallFunction) => void;
 
-export function create(name: string, execute: ExecuteFunction): Command {
+export function create<T extends Message>(name: string, execute: ExecuteFunction<T>): Command<T> {
     return { name, execute };
 }
 

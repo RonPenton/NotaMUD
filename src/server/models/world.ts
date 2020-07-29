@@ -137,14 +137,14 @@ export class World implements Scriptable {
     private async handleMessage(user: User, message: TimedMessage) {
 
         for (let command of this.commands) {
-            const handled = await command.executeMessage(message, user, this);
+            const handled = await command.executeMessage({ message, user, world: this });
             if (handled) return;
         }
 
         if (message.type == 'text-command') {
             const { head, tail } = split(message.message);
             for (let command of this.commands) {
-                const handled = await command.execute(head, tail, user, this);
+                const handled = await command.execute({ command: head, parameters: tail, user, world: this });
                 if (handled) return;
             }
 

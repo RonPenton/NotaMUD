@@ -66,8 +66,8 @@ export class GameIcon extends React.PureComponent<GameIconProps, GameIconState> 
 
         this.setState({
             ...this.state,
-            backgroundPath: background.attributes.getNamedItem("d").value,
-            foregroundPath: foreground.attributes.getNamedItem("d").value
+            backgroundPath: background.attributes.getNamedItem("d")?.value,
+            foregroundPath: foreground.attributes.getNamedItem("d")?.value
         });
     }
 

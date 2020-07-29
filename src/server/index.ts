@@ -1,21 +1,22 @@
-import * as express from 'express';
-import * as path from 'path';
-import * as http from 'http';
-import * as socketio from 'socket.io';
-import * as logger from 'morgan';
-import * as cookieParser from 'cookie-parser';
-import * as bodyParser from 'body-parser';
-import * as session from 'express-session';
-import * as passport from 'passport';
+import express from 'express';
+import path from 'path';
+import http from 'http';
+import socketio from 'socket.io';
+import logger from 'morgan';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import passport from 'passport';
 import flash = require('connect-flash');
-import * as passportSocketIo from "passport.socketio";
-import * as AWS from 'aws-sdk';
+import passportSocketIo from "passport.socketio";
+import AWS from 'aws-sdk';
 
 import secrets from './secrets';
 import config, { dbconfig } from './config';
 import { init as initRoutes } from './routes';
 import * as auth from './auth';
 import { World } from './models/world';
+import * as NotamudUser from './models/user';
 
 start();
 
@@ -52,6 +53,9 @@ function setupSocketIO(server: http.Server, port: string | number, dynamodb: any
 
         const user = req.user;
 
+        if (!user)
+            return;
+
         world.userConnecting(user, socket);
 
         socket.on('disconnect', function () {
@@ -59,7 +63,6 @@ function setupSocketIO(server: http.Server, port: string | number, dynamodb: any
             console.log("disconnected");
         });
     });
-
 }
 
 
@@ -101,3 +104,11 @@ function setupExpress(port: string | number, world: World) {
     return { server, dynamodb };
 }
 
+
+declare global {
+    namespace Express {
+        interface User extends NotamudUser.User {
+
+        }
+    }
+}

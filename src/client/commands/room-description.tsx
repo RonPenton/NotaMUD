@@ -44,7 +44,7 @@ export class Description extends OneTimeRender<Messages.RoomDescription> {
     }
 
     description() {
-        if (this.description)
+        if (this.props.description)
             return <div className="description">{this.props.description}</div>
         return null;
     }

@@ -34,7 +34,7 @@ export class IconBadge extends React.PureComponent<FullIconBadgeProps, IconBadge
 
         this.setState({
             ...this.state,
-            foregroundPath: foreground.attributes.getNamedItem("d").value
+            foregroundPath: foreground.attributes.getNamedItem("d")?.value
         });
     }
 

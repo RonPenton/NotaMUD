@@ -28,7 +28,7 @@ export const Rooms = dbAccessor<DBRoom, number>(dbconfig.rooms, "id");
 // Stolen from moment.js
 const isoRegex = /^\s*((?:[+-]\d{6}|\d{4})-(?:\d\d-\d\d|W\d\d-\d|W\d\d|\d\d\d|\d\d))(?:(T| )(\d\d(?::\d\d(?::\d\d(?:[.,]\d+)?)?)?)([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/;
 
-function prepareItemForDatabase<T>(item: T, set?: Set<any>): any {
+function prepareItemForDatabase(item: any, set?: Set<any>): any {
     // use a set to track any objects that are added, to prevent circular references
     // (and therefore stack overflows, which are bad.)
     if (!set)
@@ -37,31 +37,27 @@ function prepareItemForDatabase<T>(item: T, set?: Set<any>): any {
         return undefined;
 
     let clone: any = {};
-    for (const key in item) {
-        if (item.hasOwnProperty(key)) {
-            const value = item[key];
-            if (value instanceof moment) {
-                clone[key] = (<moment.Moment><any>value).toISOString();
-            }
-            else if (value === null || value === undefined) {
-                // check null and undefined before object because 
-                // they return true when testing against 'object'. 
-                // God damnit Javascript. 
-                clone[key] = value;
-            }
-            else if (typeof value === 'object') {
-                clone[key] = prepareItemForDatabase(value, set);
-            }
-            else {
-                clone[key] = value;
-            }
+    const keys = Object.keys(item);
+    for (const key of keys) {
+        const value = item[key];
+        if (value instanceof moment) {
+            clone[key] = (<moment.Moment><any>value).toISOString();
+        }
+        else if (value === null || value === undefined) {
+            clone[key] = value;
+        }
+        else if (typeof value === 'object') {
+            clone[key] = prepareItemForDatabase(value, set);
+        }
+        else {
+            clone[key] = value;
         }
     }
     return clone;
 }
 
 function prepareItemFromDatabase(item: any): void {
-    if(!item)
+    if (!item)
         return;
     for (const key in item) {
         if (item.hasOwnProperty(key)) {
@@ -117,7 +113,7 @@ async function getAllItems<T>(table: string): Promise<T[]> {
     }
     return new Promise<T[]>((resolve, reject) => {
         dc.scan(input, (error, data) => {
-            if(error) return reject(error);
+            if (error) return reject(error);
             resolve(data.Items as T[]);
         });
     });

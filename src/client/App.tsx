@@ -48,8 +48,8 @@ export class App extends React.Component<{}, ClientState> implements GameContext
     inputArea: InputArea | null = null;
     readonly socket: SocketIOClient.Socket;
 
-    constructor() {
-        super();
+    constructor(props: {}) {
+        super(props);
         this.state = { outputs: [this.getConnectingMessage()], connectionState: "connecting" };
         this.socket = io('', { transports: ['websocket'] });
         this.setupSocket(this.socket);

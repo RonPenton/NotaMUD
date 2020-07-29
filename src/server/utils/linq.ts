@@ -1,4 +1,5 @@
 import { isString, Func1, Func2, Action2, tuple } from "./index";
+import { mergesort } from "./mergesort";
 
 export interface Bifurcation<T> {
     trueValues: LinqContainer<T>;
@@ -25,7 +26,7 @@ export class LinqContainer<T> implements Iterable<T> {
     }
 
     public first(predicate?: Func1<T, boolean>): T {
-        var x = this.firstOrDefault(predicate);
+        const x = this.firstOrDefault(predicate);
         if (x)
             return x;
         throw Error("No matches.");
@@ -43,7 +44,7 @@ export class LinqContainer<T> implements Iterable<T> {
     }
 
     public last(predicate?: Func1<T, boolean>): T {
-        var x = this.lastOrDefault(predicate);
+        const x = this.lastOrDefault(predicate);
         if (x)
             return x;
         throw Error("No matches.");
@@ -55,7 +56,7 @@ export class LinqContainer<T> implements Iterable<T> {
             return array[array.length - 1];
         }
 
-        for (var i = array.length - 1; i >= 0; i--) {
+        for (let i = array.length - 1; i >= 0; i--) {
             if (predicate(array[i]))
                 return array[i];
         }
@@ -66,10 +67,10 @@ export class LinqContainer<T> implements Iterable<T> {
         if (picker == undefined) {
             picker = x => <U><any>x;
         }
-        var s: Set<U> = new Set<U>();
-        var output: T[] = [];
+        const s: Set<U> = new Set<U>();
+        const output: T[] = [];
         for (let x of this.values) {
-            var k = picker(x);
+            const k = picker(x);
             if (s.has(k))
                 continue;
             s.add(k);
@@ -79,15 +80,15 @@ export class LinqContainer<T> implements Iterable<T> {
     }
 
     public isInOrder(picker: Func1<T, any>): boolean {
-        var started = false;
-        var last: any;
+        let started = false;
+        let last: any;
         for (let x of this.values) {
             if (!started) {
                 last = picker(x);
                 started = true;
                 continue;
             }
-            var next = picker(x);
+            const next = picker(x);
             if (LinqContainer._ascendingCompare(last, next) > 0)
                 return false;
             last = next;
@@ -112,7 +113,7 @@ export class LinqContainer<T> implements Iterable<T> {
     }
 
     private _orderBy(picker: Func1<T, any>, thenBy: Func1<T, any>[] | undefined, comparer: Func2<any, any, number>): LinqContainer<T> {
-        var clone = this.clone();
+        const clone = this.clone();
 
         if (thenBy === undefined) {
             clone.sort(LinqContainer._pickerCompare(picker, comparer));
@@ -120,18 +121,18 @@ export class LinqContainer<T> implements Iterable<T> {
         else {
             // ThenBy clause specified. Switch to a stable sort to preserve the order on multiple passes.
             thenBy.unshift(picker);
-            for (var i = thenBy.length - 1; i >= 0; i--) {
-                MergeSort.run(clone, LinqContainer._pickerCompare(thenBy[i], comparer));
+            for (let i = thenBy.length - 1; i >= 0; i--) {
+                mergesort(clone, LinqContainer._pickerCompare(thenBy[i], comparer));
             }
         }
         return new LinqContainer(clone);
     }
 
     public groupBy<K>(picker: Func1<T, K>): LinqContainer<Grouping<T, K>> {
-        var groups: Map<K, T[]> = new Map<K, T[]>();
+        const groups: Map<K, T[]> = new Map<K, T[]>();
         for (let x of this.values) {
             let key = picker(x);
-            var group: T[];
+            let group: T[];
             if (!groups.has(key)) {
                 groups.set(key, group = []);
             }
@@ -140,8 +141,8 @@ export class LinqContainer<T> implements Iterable<T> {
             }
             group.push(x);
         }
-        var output: Grouping<T, K>[] = [];
-        for (var [key, value] of groups) {
+        const output: Grouping<T, K>[] = [];
+        for (let [key, value] of groups) {
             output.push(new Grouping<T, K>(key, value));
         }
 
@@ -178,18 +179,18 @@ export class LinqContainer<T> implements Iterable<T> {
     }
 
     public shuffle(): LinqContainer<T> {
-        var newValues: T[] = [];
-        var clone = this.clone();
+        const newValues: T[] = [];
+        const clone = this.clone();
         while (clone.length > 0) {
-            var index = (Math.random() * clone.length) | 0;
+            const index = (Math.random() * clone.length) | 0;
             newValues.push(clone.splice(index, 1)[0]);
         }
         return Linq(newValues);
     }
 
     public static sequence(length: number): LinqContainer<number> {
-        var array: number[] = [];
-        for (var i = 0; i < length; i++)
+        const array: number[] = [];
+        for (let i = 0; i < length; i++)
             array.push(i);
         return Linq(array);
     }
@@ -317,14 +318,12 @@ export class LinqContainer<T> implements Iterable<T> {
     private _minOrMax<U>(picker: Func1<T, U>, comp: Func2<U, U, boolean>): T {
         var last = this.first();
         var lastValue = picker(last);
-        var index = 0;
 
-        this.forEach((x, i) => {
+        this.forEach((x) => {
             let current = picker(x);
             if (comp(current, lastValue)) {
                 last = x;
                 lastValue = current;
-                index = i;
             }
         });
 
@@ -470,35 +469,5 @@ export class LinqContainer<T> implements Iterable<T> {
 export class Grouping<T, K> extends LinqContainer<T> {
     constructor(public key: K, values: Iterable<T>) {
         super(values);
-    }
-}
-
-/**
-    * Provides methods to perform a merge sort. While typically slower than a quick sort, it is a stable sort, which is sometimes necessary in some conditions.
-    */
-module MergeSort {
-    export function run<T>(values: T[], compareFn: (a: T, b: T) => number) {
-        if (!values || values.length == 0)
-            return;
-        _mergeSort(values, values.slice(0), values.length, compareFn);
-    }
-
-    function _mergeSort<T>(values: T[], temp: T[], length: number, compareFn: (a: T, b: T) => number) {
-        if (length == 1) return;
-        var m = Math.floor(length / 2);
-        var tmp_l = temp.slice(0, m);
-        var tmp_r = temp.slice(m);
-        _mergeSort(tmp_l, values.slice(0, m), m, compareFn);
-        _mergeSort(tmp_r, values.slice(m), length - m, compareFn);
-        _merge(tmp_l, tmp_r, values, compareFn);
-    }
-
-    function _merge<T>(left: T[], right: T[], values: T[], compareFn: (a: T, b: T) => number) {
-        var a = 0;
-        while (left.length && right.length) {
-            values[a++] = compareFn(right[0], left[0]) < 0 ? right.shift()! : left.shift()!;
-        }
-        while (left.length) values[a++] = left.shift()!;
-        while (right.length) values[a++] = right.shift()!;
     }
 }
